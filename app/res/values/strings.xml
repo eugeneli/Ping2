@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ping</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="email">Email Address</string>
+    
+    <string name="newPingTitle">New Ping</string>
+    <string name="titleHint">Title</string>
+    <string name="messageHint">Message</string>
+    <string name="addressHint">Address (Optional)</string>
+    <string name="submitPing">Ping it!</string>
+
+</resources>
