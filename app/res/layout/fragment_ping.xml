@@ -9,41 +9,51 @@
 	android:paddingTop="@dimen/activity_vertical_margin"
 	android:layout_margin="16dp"
 	android:padding="16dp"
-	style="@style/YellowPanel" >
-
-    <ImageView
-        android:id="@+id/userPic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/ic_launcher" />
+	style="@style/SemiTransBluePanel" >
 
     <TextView
         android:id="@+id/pingTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/userPic"
         android:layout_alignParentLeft="true"
-        android:text="Ping Title"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_alignParentTop="true"
+        android:text="Ping title"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/pingAuthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/textView1"
+        android:text="Posted by Author"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ImageView
+        android:id="@+id/pingImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView2"
+        android:src="@drawable/ic_launcher" />
 
     <TextView
         android:id="@+id/pingMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/pingTitle"
-        android:layout_below="@+id/pingTitle"
-        android:text="THIS IS A TEST PING MESSAGE \n \n PING DING RING A DING DING \n WOW \n COOL \n YES"
+        android:layout_alignLeft="@+id/imageView1"
+        android:layout_below="@+id/imageView1"
+        android:text="Ping Message \n\n yes this is a message"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <ImageView
-        android:id="@+id/imageView1"
+    <TextView
+        android:id="@+id/pingAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/pingMessage"
-        android:layout_below="@+id/pingMessage"
-        android:layout_marginTop="22dp"
-        android:src="@drawable/ic_launcher" />
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_below="@+id/textView3"
+        android:text="near 123 Fake Street"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
    
 </RelativeLayout>

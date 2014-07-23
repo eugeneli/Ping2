@@ -10,7 +10,7 @@
 	android:paddingTop="@dimen/activity_vertical_margin"
 	android:layout_margin="16dp"
 	android:id="@+id/root">
-       
+
     <TextView
         android:id="@+id/appName"
         android:layout_width="wrap_content"
