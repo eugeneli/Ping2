@@ -12,6 +12,9 @@ public class PingApi
 {
 	@SuppressWarnings("unused")
 	private final static String TAG = PingApi.class.getSimpleName();
+	
+	private Context context;
+	private String authToken;
 
 	private final static String PING_AUTHTOKEN_HEADER = "Auth-Token";
 	
@@ -20,8 +23,23 @@ public class PingApi
 	
 	public final static String RESPONSE_ERROR_MESSAGE = "message";
 	
-	public static void getPingsInArea(Context context, String authToken, double latitude, double longitude, int radius,
-			FutureCallback<Response<JsonObject>> callback)
+	private static PingApi instance = null;
+
+	public static PingApi getInstance(Context context, String authToken)
+	{ 
+		//save these parameters so you don't have to pass them into each API call!
+		if(instance == null)
+			instance = new PingApi(context, authToken);
+		return instance;
+	}
+	
+	private PingApi(Context c, String auth)
+	{
+		context = c;
+		authToken = auth;
+	}
+	
+	public void getPingsInArea(double latitude, double longitude, int radius, FutureCallback<Response<JsonObject>> callback)
 	{
 		Ion.with(context)
 		.load("GET", PingApiUrls.getPingsInAreaUrl(latitude, longitude, radius))
@@ -31,7 +49,7 @@ public class PingApi
 		.setCallback(callback);
 	}
 	
-	public static void getPingById(Context context, String authToken, int id, FutureCallback<Response<JsonObject>> callback)
+	public void getPingById(int id, FutureCallback<Response<JsonObject>> callback)
 	{
 		Ion.with(context)
 		.load("GET", PingApiUrls.getPingByIdUrl(id))
@@ -41,7 +59,7 @@ public class PingApi
 		.setCallback(callback);
 	}
 	
-	public static void postNewPing(Context context, String authToken, Ping ping, FutureCallback<Response<JsonObject>> callback)
+	public void postNewPing(Ping ping, FutureCallback<Response<JsonObject>> callback)
 	{
 		JsonObject json = new JsonObject();
 		JsonObject data = new JsonObject();
@@ -63,7 +81,7 @@ public class PingApi
 		.setCallback(callback);
 	}
 	
-	public static void updatePing(Context context, String authToken, Ping ping, FutureCallback<Response<JsonObject>> callback)
+	public void updatePing(String authToken, Ping ping, FutureCallback<Response<JsonObject>> callback)
 	{
 		JsonObject json = new JsonObject();
 		JsonObject data = new JsonObject();
@@ -82,7 +100,7 @@ public class PingApi
 		.setCallback(callback);
 	}
 	
-	public static void getUser(Context context, String authToken, FutureCallback<Response<JsonObject>> callback)
+	public void getUser(FutureCallback<Response<JsonObject>> callback)
 	{
 		Ion.with(context)
 		.load("GET", PingApiUrls.userUrl())
@@ -92,8 +110,7 @@ public class PingApi
 		.setCallback(callback);
 	}
 	
-	public static void userLogin(Context context, String authToken, String oAuthProvider, String oAuthAccessToken, 
-			FutureCallback<Response<JsonObject>> callback)
+	public void userLogin(String oAuthProvider, String oAuthAccessToken, FutureCallback<Response<JsonObject>> callback)
 	{
 		if(authToken != null)
 		{
@@ -123,7 +140,7 @@ public class PingApi
 		}
 	}
 	
-	public void getUserById(Context context, String authToken, int id, FutureCallback<Response<JsonObject>> callback)
+	public void getUserById(int id, FutureCallback<Response<JsonObject>> callback)
 	{
 		Ion.with(context)
 		.load("GET", PingApiUrls.getUserByIdUrl(id))
@@ -133,7 +150,7 @@ public class PingApi
 		.setCallback(callback);
 	}
 	
-	public void getUserPingsById(Context context, String authToken, int id, FutureCallback<Response<JsonObject>> callback)
+	public void getUserPingsById(int id, FutureCallback<Response<JsonObject>> callback)
 	{
 		Ion.with(context)
 		.load("GET", PingApiUrls.getUserPingsUrl(id))
