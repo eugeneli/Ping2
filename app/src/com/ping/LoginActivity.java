@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.plus.Plus;
 
+import com.ping.fragments.FacebookLoginFragment;
 import com.ping.models.PingMap;
 import com.ping.util.FontTools;
 
@@ -32,13 +33,16 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	
 	private PingMap map;
 	
-	//GooglePlus Sign-in variables
+	//GooglePlus Login variables
 	private SignInButton gplusLoginButton;
 	private static final int GPLUS_REQUEST_CODE_SIGNIN = 0;
 	private GoogleApiClient googleApi;
 	private boolean intentInProgress;
 	private boolean googleSignInClicked;
 	private ConnectionResult googleConnectionResult;
+	
+	//Facebook Login variables
+	private FacebookLoginFragment fbLoginFragment;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -70,6 +74,19 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 				}
 			}
 		});
+		
+		if (savedInstanceState == null) {
+	        // Add the fragment on initial activity setup
+	        fbLoginFragment = new FacebookLoginFragment();
+	        getSupportFragmentManager()
+	        .beginTransaction()
+	        .add(android.R.id.content, fbLoginFragment)
+	        .commit();
+	    } else {
+	        // Or set the fragment from restored state info
+	    	fbLoginFragment = (FacebookLoginFragment) getSupportFragmentManager()
+	        .findFragmentById(android.R.id.content);
+	    }
 	}
 	
 	public PingMap getMap() { return map; }
