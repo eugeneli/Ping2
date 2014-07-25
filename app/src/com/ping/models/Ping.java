@@ -21,19 +21,15 @@ public class Ping implements Parcelable
 	
 	public static final String ID = "id";
 	public static final String TITLE = "title";
-	public static final String CREATION_TIME = "createdAt";
+	public static final String CREATED_AT = "createdAt";
 	public static final String DURATION = "duration";
-	public static final String LOCATION = "location";
+	public static final String LATITUDE = "latitude";
+	public static final String LONGITUDE = "longitude";
 	public static final String MESSAGE = "message";
 	
 	public Ping()
 	{
 		//TODO
-	}
-	
-	public Ping(JSONObject json)
-	{
-		fromJSON(json);
 	}
 	
 	public void setId(int pingid) { id = pingid; }
@@ -53,47 +49,6 @@ public class Ping implements Parcelable
 	
 	public void setLocation(LatLng loc) { latitude = loc.latitude; longitude = loc.longitude; }
 	public LatLng getLocation() { return new LatLng(latitude, longitude); }
-	
-	public JSONObject toJSON()
-	{
-		JSONObject json = new JSONObject();
-		try {
-			json.put(ID, getId());
-			json.put(TITLE, getTitle());
-			json.put(CREATION_TIME, getCreationTime());
-			json.put(DURATION, getDuration());
-			json.put(MESSAGE, getMessage());
-			
-			JSONArray location = new JSONArray();
-			location.put(getLocation().latitude);
-			location.put(getLocation().longitude);
-			
-			json.put(LOCATION, location);
-
-			return json;
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return json;
-	}
-	
-	public void fromJSON(JSONObject json)
-	{
-		try {
-			setId(json.getInt(ID));
-			setTitle(json.getString(TITLE));
-			setCreationTime(json.getLong(CREATION_TIME));
-			setDuration(json.getLong(DURATION));
-			setMessage(json.getString(MESSAGE));
-			
-			JSONArray loc = json.getJSONArray(LOCATION);
-			LatLng latlng = new LatLng(loc.getDouble(0), loc.getDouble(1));
-			setLocation(latlng);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	@Override
 	public int describeContents() {
