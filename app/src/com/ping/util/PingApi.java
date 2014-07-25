@@ -19,9 +19,8 @@ public class PingApi
 	private final static String PING_AUTHTOKEN_HEADER = "Auth-Token";
 	
 	public final static String RESPONSE_STATUS = "success";
-	public final static String DATA = "data";
-	
 	public final static String RESPONSE_ERROR_MESSAGE = "message";
+	public final static String DATA = "data";
 	
 	private static PingApi instance = null;
 

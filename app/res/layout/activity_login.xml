@@ -21,7 +21,15 @@
 			        android:id="@+id/loginFragment"
 			        android:layout_width="match_parent"
 			        android:layout_height="match_parent" />
-		
+
+		    <com.google.android.gms.common.SignInButton
+		        android:id="@+id/gplusLogin"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentBottom="true"
+		        android:layout_centerHorizontal="true" >
+		    </com.google.android.gms.common.SignInButton>
+
 		</RelativeLayout>
 
 </RelativeLayout>

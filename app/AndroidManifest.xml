@@ -14,6 +14,8 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+	<uses-permission android:name="android.permission.USE_CREDENTIALS" />
     
     <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
     
@@ -38,7 +40,7 @@
         <meta-data android:name="com.google.android.gms.version"
             android:value="5077000" />
         <meta-data android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBB4T6hlBr4f5FFxDbia3zWaABNJX5p76c" />
+            android:value="AIzaSyBImhQ4ygBBFrEuCJ7lhBJjonJLDbPdNzU" />
     </application>
 
 </manifest>

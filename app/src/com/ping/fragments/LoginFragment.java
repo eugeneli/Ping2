@@ -2,7 +2,6 @@ package com.ping.fragments;
 
 import com.ping.MainActivity;
 import com.ping.R;
-import com.ping.util.FontTools;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -62,6 +61,7 @@ public class LoginFragment extends Fragment
 		submitRegisterButton = (Button) getActivity().findViewById(R.id.submitRegister);
 		
 		setupListeners(getActivity());
+
 	}
 	
 	private void setupListeners(final Activity activity)
@@ -117,4 +117,9 @@ public class LoginFragment extends Fragment
 			}
 		});
 	}
+	
+	
+	
+	
+	
 }
