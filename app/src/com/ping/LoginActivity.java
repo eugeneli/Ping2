@@ -268,6 +268,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	
 	protected void onActivityResult(int requestCode, int responseCode, Intent intent)
 	{
+		super.onActivityResult(requestCode, responseCode, intent); 
 		if (requestCode == GPLUS_REQUEST_CODE_SIGNIN)
 		{
 			intentInProgress = false;
