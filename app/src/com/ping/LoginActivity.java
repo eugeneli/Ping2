@@ -247,6 +247,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 				try {
 					String token = GoogleAuthUtil.getToken(context, Plus.AccountApi.getAccountName(googleApi), scope);
 					loginWithOAuth(GOOGLE_PLUS, token);
+					
 				} catch (UserRecoverableAuthException e) {
 					e.printStackTrace();
 				} catch (IOException e) {

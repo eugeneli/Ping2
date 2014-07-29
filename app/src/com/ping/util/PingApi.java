@@ -32,10 +32,15 @@ public class PingApi
 		return instance;
 	}
 	
-	private PingApi(Context c, String auth)
+	private PingApi(Context c, String token)
 	{
 		context = c;
-		authToken = auth;
+		authToken = token;
+	}
+	
+	public void setAuthToken(String token)
+	{
+		authToken = token;
 	}
 	
 	public void getPingsInArea(double latitude, double longitude, int radius, FutureCallback<Response<JsonObject>> callback)
@@ -62,7 +67,7 @@ public class PingApi
 	{
 		JsonObject json = new JsonObject();
 		JsonObject data = new JsonObject();
-
+		
 		data.addProperty(Ping.DURATION, ping.getDuration());
 		data.addProperty(Ping.LATITUDE, ping.getLocation().latitude);
 		data.addProperty(Ping.LONGITUDE, ping.getLocation().longitude);
@@ -109,34 +114,40 @@ public class PingApi
 		.setCallback(callback);
 	}
 	
-	public void userLogin(String oAuthProvider, String oAuthAccessToken, FutureCallback<Response<JsonObject>> callback)
+	public void userOAuthLogin(String oAuthProvider, String oAuthAccessToken, FutureCallback<Response<JsonObject>> callback)
 	{
-		if(authToken != null)
-		{
-			Ion.with(context)
-			.load("POST", PingApiUrls.userLoginUrl())
-			.addHeader(PING_AUTHTOKEN_HEADER, authToken)
-			.asJsonObject()
-			.withResponse()
-			.setCallback(callback);
-		}
-		else
-		{
-			JsonObject json = new JsonObject();
-			JsonObject data = new JsonObject();
+		JsonObject json = new JsonObject();
+		JsonObject data = new JsonObject();
 
-			data.addProperty("oauth", oAuthProvider);
-			data.addProperty("token", oAuthAccessToken);
-			
-			json.add(DATA, data);
-			
-			Ion.with(context)
-			.load("POST", PingApiUrls.userLoginUrl())
-			.setJsonObjectBody(json)
-			.asJsonObject()
-			.withResponse()
-			.setCallback(callback);
-		}
+		data.addProperty("oauth", oAuthProvider);
+		data.addProperty("token", oAuthAccessToken);
+		
+		json.add(DATA, data);
+		
+		Ion.with(context)
+		.load("POST", PingApiUrls.userLoginUrl())
+		.setJsonObjectBody(json)
+		.asJsonObject()
+		.withResponse()
+		.setCallback(callback);
+	}
+	
+	public void userNormalLogin(String username, String password, FutureCallback<Response<JsonObject>> callback)
+	{
+		JsonObject json = new JsonObject();
+		JsonObject data = new JsonObject();
+
+		data.addProperty("username", username);
+		data.addProperty("password", password);
+		
+		json.add(DATA, data);
+		
+		Ion.with(context)
+		.load("POST", PingApiUrls.userLoginUrl())
+		.setJsonObjectBody(json)
+		.asJsonObject()
+		.withResponse()
+		.setCallback(callback);
 	}
 	
 	public void getUserById(int id, FutureCallback<Response<JsonObject>> callback)

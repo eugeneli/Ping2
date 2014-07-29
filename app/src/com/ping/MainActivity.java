@@ -6,7 +6,9 @@ import com.ping.interfaces.PingInterface;
 import com.ping.models.Ping;
 import com.ping.models.PingMap;
 import com.ping.util.FontTools;
+import com.ping.util.PingPrefs;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -20,8 +22,10 @@ public class MainActivity extends FragmentActivity implements PingInterface
 	public static final String TAG = MainActivity.class.getSimpleName();
 	
 	private PingMap map;
+	private PingPrefs prefs;
 	private MainFragment mainFragment;
 	
+	public static final String AUTH_TOKEN_BUNDLE = "bundle";
 	public static final String BUNDLE_ACTION = "bundle_action";
 	public static final String BUNDLE_DATA = "bundle_data";
 	
@@ -38,9 +42,19 @@ public class MainActivity extends FragmentActivity implements PingInterface
 		setContentView(R.layout.activity_main);
 		FontTools.applyFont(this, findViewById(R.id.root));
 		
-		map = new PingMap(this, R.id.map);
-		map.demoMapMarkers();
-		map.demoMapOrigin();
+		prefs = PingPrefs.getInstance(this);
+		if(prefs.getAuthToken() != null)
+		{
+			map = new PingMap(this, R.id.map);
+			map.demoMapMarkers();
+			map.demoMapOrigin();
+		}
+		else
+		{
+			Intent intent = new Intent(this, LoginActivity.class);
+			startActivity(intent);
+		}
+		
 	}
 
 	@Override
