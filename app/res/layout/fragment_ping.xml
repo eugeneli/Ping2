@@ -24,8 +24,8 @@
         android:id="@+id/pingAuthor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
+        android:layout_alignLeft="@+id/pingTitle"
+        android:layout_below="@+id/pingTitle"
         android:text="Posted by Author"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -33,17 +33,17 @@
         android:id="@+id/pingImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
+        android:layout_alignLeft="@+id/pingAuthor"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/textView2"
+        android:layout_below="@+id/pingAuthor"
         android:src="@drawable/ic_launcher" />
 
     <TextView
         android:id="@+id/pingMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/imageView1"
-        android:layout_below="@+id/imageView1"
+        android:layout_alignLeft="@+id/pingImage"
+        android:layout_below="@+id/pingImage"
         android:text="Ping Message \n\n yes this is a message"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -51,8 +51,8 @@
         android:id="@+id/pingAddress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView3"
-        android:layout_below="@+id/textView3"
+        android:layout_alignLeft="@+id/pingMessage"
+        android:layout_below="@+id/pingMessage"
         android:text="near 123 Fake Street"
         android:textAppearance="?android:attr/textAppearanceSmall" />
    
