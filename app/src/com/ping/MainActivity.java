@@ -54,7 +54,6 @@ public class MainActivity extends FragmentActivity implements PingInterface
 			Intent intent = new Intent(this, LoginActivity.class);
 			startActivity(intent);
 		}
-		
 	}
 
 	@Override
