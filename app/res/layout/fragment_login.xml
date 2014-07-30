@@ -58,6 +58,7 @@
     		android:layout_width="match_parent"
         	android:layout_height="wrap_content"
         	android:layout_marginLeft="25dp"
+        	android:imeOptions="actionDone"
         	style="@style/MinimalEditText"
     	    />
 

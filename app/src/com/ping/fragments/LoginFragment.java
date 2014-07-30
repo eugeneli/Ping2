@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -40,28 +41,28 @@ public class LoginFragment extends Fragment
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false);
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
+        
+        loginButton = (TextView) view.findViewById(R.id.login);
+		registerButton = (TextView) view.findViewById(R.id.register);
+		username = (EditText) view.findViewById(R.id.username);
+		separator = view.findViewById(R.id.separator);
+		password = (EditText) view.findViewById(R.id.password);
+		
+		newUsername = (EditText) view.findViewById(R.id.newUsername);
+		newPassword = (EditText) view.findViewById(R.id.newPassword);
+		newEmail = (EditText) view.findViewById(R.id.newEmail);
+		submitRegisterButton = (Button) view.findViewById(R.id.submitRegister);
+		
+		setupListeners(getActivity());
+        
+        return view;
     }
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		
-		loginButton = (TextView) getActivity().findViewById(R.id.login);
-		registerButton = (TextView) getActivity().findViewById(R.id.register);
-		username = (EditText) getActivity().findViewById(R.id.username);
-		separator = getActivity().findViewById(R.id.separator);
-		password = (EditText) getActivity().findViewById(R.id.password);
-		
-		newUsername = (EditText) getActivity().findViewById(R.id.newUsername);
-		newPassword = (EditText) getActivity().findViewById(R.id.newPassword);
-		newEmail = (EditText) getActivity().findViewById(R.id.newEmail);
-		submitRegisterButton = (Button) getActivity().findViewById(R.id.submitRegister);
-		
-		setupListeners(getActivity());
-
 	}
 	
 	private void setupListeners(final Activity activity)
@@ -91,20 +92,17 @@ public class LoginFragment extends Fragment
 			}
 		});
 		
-		password.setOnKeyListener(new OnKeyListener() {
+		password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event)
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
 			{
-				if (event.getAction() == KeyEvent.ACTION_DOWN)
-		        {
-					if(keyCode == KeyEvent.KEYCODE_ENTER)
-					{
-						Intent intent = new Intent(activity, MainActivity.class);
-						startActivity(intent);
-						return true;
-					}
-		        }
-		        return false;
+				if(actionId == EditorInfo.IME_ACTION_DONE || event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+				{
+					Intent intent = new Intent(activity, MainActivity.class);
+					startActivity(intent);
+					return true;
+				}
+				return false;
 			}
 		});
 		
