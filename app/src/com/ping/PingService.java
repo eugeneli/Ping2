@@ -39,7 +39,7 @@ public class PingService extends Service
 		
         // Check the global background data setting
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        if (!cm.getBackgroundDataSetting() || (cm.getActiveNetworkInfo() != null && !cm.getActiveNetworkInfo().isAvailable()))
+        if (!cm.getBackgroundDataSetting() || cm.getActiveNetworkInfo() == null || !cm.getActiveNetworkInfo().isAvailable())
         {
             stopSelf();
             return;
