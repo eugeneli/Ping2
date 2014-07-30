@@ -14,6 +14,8 @@
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+	<uses-permission android:name="android.permission.USE_CREDENTIALS" />
     
     <uses-feature android:glEsVersion="0x00020000" android:required="true"/>
     
@@ -23,8 +25,9 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/app_name" >
+            android:name=".StartActivity"
+            android:label="@string/app_name"
+            android:noHistory="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,13 +35,16 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" android:noHistory="true"></activity>
+        <activity android:name="com.facebook.LoginActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:label="@string/app_name" />
+        <activity android:name=".LoginActivity" android:noHistory="true"></activity>
         
         
         <meta-data android:name="com.google.android.gms.version"
             android:value="5077000" />
         <meta-data android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyBB4T6hlBr4f5FFxDbia3zWaABNJX5p76c" />
+            android:value="AIzaSyBImhQ4ygBBFrEuCJ7lhBJjonJLDbPdNzU" />
+        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/app_id"/>
     </application>
 
 </manifest>
