@@ -4,8 +4,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -32,6 +32,7 @@ public class PingMap
 			@Override
 			public void onInfoWindowClick(Marker marker)
 			{
+
 				FragmentTransaction ft = parentActivity.getSupportFragmentManager().beginTransaction();
 				ft.setCustomAnimations(R.anim.zoom_enter, R.anim.zoom_exit,R.anim.zoom_enter, R.anim.zoom_exit);
 

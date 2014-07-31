@@ -1,11 +1,16 @@
 package com.ping;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 import com.ping.fragments.MainFragment;
 import com.ping.fragments.NewPingFragment;
 import com.ping.interfaces.PingInterface;
 import com.ping.models.Ping;
 import com.ping.models.PingMap;
 import com.ping.util.FontTools;
+import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
 
 import android.content.Intent;
@@ -22,7 +27,9 @@ public class MainActivity extends FragmentActivity implements PingInterface
 	public static final String TAG = MainActivity.class.getSimpleName();
 	
 	private PingMap map;
+	private PingApi pingApi;
 	private PingPrefs prefs;
+	private String authToken;
 	private MainFragment mainFragment;
 	
 	public static final String AUTH_TOKEN_BUNDLE = "bundle";
@@ -43,11 +50,23 @@ public class MainActivity extends FragmentActivity implements PingInterface
 		FontTools.applyFont(this, findViewById(R.id.root));
 		
 		prefs = PingPrefs.getInstance(this);
-		if(prefs.getAuthToken() != null)
+		authToken = prefs.getAuthToken();
+		if(authToken != null)
 		{
+			pingApi = PingApi.getInstance(this, authToken);
 			map = new PingMap(this, R.id.map);
 			map.demoMapMarkers();
 			map.demoMapOrigin();
+			
+			LatLng loc = prefs.getLocation();
+			int radius = prefs.getRadius();
+			pingApi.getPingsInArea(loc.latitude, loc.longitude, radius, new FutureCallback<Response<JsonObject>>(){
+				@Override
+				public void onCompleted(Exception e, Response<JsonObject> response)
+				{
+					//TODO: Loop through response and place pings on map
+				}
+			});
 			
 			PingService.scheduleService(this);
 		}

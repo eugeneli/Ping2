@@ -4,11 +4,16 @@ import java.io.IOException;
 import java.util.List;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 import com.ping.MainActivity;
 import com.ping.R;
 import com.ping.interfaces.PingInterface;
 import com.ping.models.Ping;
 import com.ping.util.FontTools;
+import com.ping.util.PingApi;
+import com.ping.util.PingPrefs;
 
 import android.app.Activity;
 import android.location.Address;
@@ -27,6 +32,8 @@ public class NewPingFragment extends Fragment
 	public static final String TAG = NewPingFragment.class.getSimpleName();
 	private final NewPingFragment fragment = this;
 	private PingInterface dataPasser;
+	private PingApi pingApi;
+	private PingPrefs prefs;
 	
 	private EditText title;
 	private EditText duration;
@@ -34,7 +41,7 @@ public class NewPingFragment extends Fragment
 	private EditText message;
 	private Button submitButton;
 	
-	public static NewPingFragment newInstance() 
+	public static NewPingFragment newInstance()
 	{
 		NewPingFragment frag = new NewPingFragment();
 	    return frag;
@@ -52,6 +59,9 @@ public class NewPingFragment extends Fragment
 		message = (EditText) getActivity().findViewById(R.id.message);
 		submitButton = (Button) getActivity().findViewById(R.id.submitPingButton);
 		
+		prefs = PingPrefs.getInstance(getActivity());
+		pingApi = PingApi.getInstance(getActivity(), prefs.getAuthToken());
+		
 		submitButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v)
@@ -64,17 +74,30 @@ public class NewPingFragment extends Fragment
 				try {
 					List<Address> list = gc.getFromLocationName(address.getText().toString(), 1);
 					LatLng loc = new LatLng(list.get(0).getLatitude(), list.get(0).getLongitude());
-					ping.setLocation(loc);
+					
+					if(loc != null)
+					{
+						ping.setLocation(loc);
+						
+						pingApi.postNewPing(ping, new FutureCallback<Response<JsonObject>>(){
+							@Override
+							public void onCompleted(Exception e, Response<JsonObject> response)
+							{
+								//TODO: Add ping to map. (WITH ID! <-- should be returned by server!)
+							}
+						});
+						
+						Bundle b = new Bundle();
+						b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
+						b.putParcelable(MainActivity.BUNDLE_DATA, ping);
+						passData(b);
+						getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+					}
+					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				    
-				Bundle b = new Bundle();
-				b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
-				b.putParcelable(MainActivity.BUNDLE_DATA, ping);
-				passData(b);
-				getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
 			}
 		});
 	}
