@@ -30,17 +30,18 @@
 		        android:layout_centerHorizontal="true"
 		        android:gravity="center"
 		        android:orientation="vertical" >
+		        
+		        <com.facebook.widget.LoginButton
+		            android:id="@+id/fbLogin"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content" />
 
 		        <com.google.android.gms.common.SignInButton
 		            android:id="@+id/gplusLogin"
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content" >
 		        </com.google.android.gms.common.SignInButton>
-
-		        <com.facebook.widget.LoginButton
-		            android:id="@+id/fbLogin"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content" />
+		        
 		    </LinearLayout>
 
 		</RelativeLayout>

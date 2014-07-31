@@ -27,9 +27,11 @@ import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
 
 import android.support.v4.app.FragmentActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender.SendIntentException;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +45,8 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	
 	private PingMap map;
 	private PingApi pingApi;
+	private Resources resources;
+	private ProgressDialog progress;
 	
 	public static final String GOOGLE_PLUS = "google";
 	public static final String FACEBOOK = "facebook";
@@ -70,6 +74,9 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 		pingApi = PingApi.getInstance(this, null);
 		map = new PingMap(this, R.id.map);
 		map.demoMapOrigin();
+		
+		resources = getResources();
+		progress = new ProgressDialog(this);
 
 		googleApi = new GoogleApiClient.Builder(this)
         .addConnectionCallbacks(this)
@@ -85,6 +92,10 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 			{
 				if(!googleApi.isConnecting())
 				{
+					progress.setTitle(resources.getString(R.string.gplusLoadingTitle));
+					progress.setMessage(resources.getString(R.string.gplusLoadingMessage));
+					progress.show();
+					
 				    googleSignInClicked = true;
 				    resolveSignInErrors();
 				}
@@ -113,6 +124,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	
 	public void loginWithOAuth(String oAuthProvider, String oAuthAccessToken)
 	{
+		progress.dismiss();
 		if(oAuthProvider.equals(GOOGLE_PLUS))
 		{
 			Log.d(TAG, oAuthProvider + " - " + oAuthAccessToken);
@@ -255,7 +267,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 			protected Object doInBackground(Object... params)
 			{
 				String serverClientId = getResources().getString(R.string.serverClientId);
-				String scope = "oauth2:server:client_id:"+ serverClientId +":api_scope:" + Scopes.PLUS_LOGIN + " https://www.googleapis.com/auth/plus.profile.emails.read";
+				String scope = "audience:server:client_id:"+ serverClientId;// +":api_scope:" + Scopes.PLUS_LOGIN + " https://www.googleapis.com/auth/plus.profile.emails.read";
 				
 				try {
 					String token = GoogleAuthUtil.getToken(context, Plus.AccountApi.getAccountName(googleApi), scope);
