@@ -48,6 +48,8 @@ public class MainActivity extends FragmentActivity implements PingInterface
 			map = new PingMap(this, R.id.map);
 			map.demoMapMarkers();
 			map.demoMapOrigin();
+			
+			PingService.scheduleService(this);
 		}
 		else
 		{

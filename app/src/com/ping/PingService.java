@@ -1,5 +1,7 @@
  package com.ping;
 
+import java.util.Calendar;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
@@ -7,6 +9,7 @@ import com.koushikdutta.ion.Response;
 import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -35,15 +38,16 @@ public class PingService extends Service
 	
 	private void handleIntent(Intent intent)
 	{
-		Log.i(TAG, "Service started");
-		
         // Check the global background data setting
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        if (!cm.getBackgroundDataSetting() || cm.getActiveNetworkInfo() == null || !cm.getActiveNetworkInfo().isAvailable())
+        if (!cm.getBackgroundDataSetting())
         {
+        	Log.e(TAG, "No data connection. Stopping service.");
             stopSelf();
             return;
         }
+        
+        Log.i(TAG, "Service started");
         
 		LatLng loc = prefs.getLocation();
 		int radius = prefs.getRadius();
@@ -76,5 +80,15 @@ public class PingService extends Service
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public static void scheduleService(Context context)
+	{
+	   Intent intent = new Intent(context, PingService.class);
+	   PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+
+	   AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+	   alarm.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*60, pendingIntent);
+	   //Run every minute for testing purposes
 	}
 }

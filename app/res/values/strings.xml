@@ -12,6 +12,8 @@
     <string name="messageHint">Message</string>
     <string name="addressHint">Address (Optional)</string>
     <string name="submitPing">Ping it!</string>
+    
+    <string name="serverClientId">795269385456-a25lh6npnpicutd5od1counauvj7lssb.apps.googleusercontent.com</string>
 
     <string name="app_id">1513182342246142</string>
 </resources>

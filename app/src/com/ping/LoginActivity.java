@@ -24,6 +24,7 @@ import com.koushikdutta.ion.Response;
 import com.ping.models.PingMap;
 import com.ping.util.FontTools;
 import com.ping.util.PingApi;
+import com.ping.util.PingPrefs;
 
 import android.support.v4.app.FragmentActivity;
 import android.content.Context;
@@ -69,7 +70,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 		pingApi = PingApi.getInstance(this, null);
 		map = new PingMap(this, R.id.map);
 		map.demoMapOrigin();
-		
+
 		googleApi = new GoogleApiClient.Builder(this)
         .addConnectionCallbacks(this)
         .addOnConnectionFailedListener(this)
@@ -128,15 +129,25 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 					
 				}
 			});*/
+			
+			PingPrefs prefs = PingPrefs.getInstance(this);
+			prefs.setAuthToken("asd");
+			
+			finish();
 		}
 		else if(oAuthProvider.equals(FACEBOOK))
 		{
 			Log.d(TAG, oAuthProvider + " - " + oAuthAccessToken);
 			Bundle bundle = new Bundle();
-			bundle.putString(GOOGLE_PLUS, oAuthAccessToken);
+			bundle.putString(FACEBOOK, oAuthAccessToken);
 			Intent intent = new Intent(this, MainActivity.class);
 			intent.putExtra("bundle", bundle);
 			startActivity(intent);
+			
+			PingPrefs prefs = PingPrefs.getInstance(this);
+			prefs.setAuthToken("asd");
+			
+			finish();
 		}
 	}
 	
@@ -204,7 +215,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	/* A helper method to resolve the current ConnectionResult error. */
 	private void resolveSignInErrors()
 	{
-	  if (googleConnectionResult.hasResolution())
+	  if (googleConnectionResult != null && googleConnectionResult.hasResolution())
 	  {
 	    try {
 	      intentInProgress = true;
@@ -239,17 +250,18 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	public void onConnected(Bundle connectionHint)
 	{
 		final Context context = this.getApplicationContext();
-		AsyncTask task = new AsyncTask() {
+		AsyncTask<Object, Void, Object> task = new AsyncTask<Object, Void, Object>() {
 			@Override
 			protected Object doInBackground(Object... params)
 			{
-				String scope = "oauth2:" + Scopes.PLUS_LOGIN;
+				String serverClientId = getResources().getString(R.string.serverClientId);
+				String scope = "oauth2:server:client_id:"+ serverClientId +":api_scope:" + Scopes.PLUS_LOGIN + " https://www.googleapis.com/auth/plus.profile.emails.read";
+				
 				try {
 					String token = GoogleAuthUtil.getToken(context, Plus.AccountApi.getAccountName(googleApi), scope);
 					loginWithOAuth(GOOGLE_PLUS, token);
-					
 				} catch (UserRecoverableAuthException e) {
-					e.printStackTrace();
+					startActivityForResult(e.getIntent(), 0);
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (GoogleAuthException e) {
@@ -269,7 +281,6 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	
 	protected void onActivityResult(int requestCode, int responseCode, Intent intent)
 	{
-		super.onActivityResult(requestCode, responseCode, intent); 
 		if (requestCode == GPLUS_REQUEST_CODE_SIGNIN)
 		{
 			intentInProgress = false;
