@@ -92,7 +92,6 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 			{
 				if(!googleApi.isConnecting())
 				{
-					progress.setTitle(resources.getString(R.string.gplusLoadingTitle));
 					progress.setMessage(resources.getString(R.string.gplusLoadingMessage));
 					progress.show();
 					
