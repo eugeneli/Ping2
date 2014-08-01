@@ -1,5 +1,9 @@
 package com.ping.models;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
@@ -10,6 +14,7 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.ping.MainActivity;
 import com.ping.R;
 import com.ping.fragments.PingFragment;
 
@@ -17,6 +22,7 @@ public class PingMap
 {
 	private GoogleMap map;
 	private FragmentActivity parentActivity;
+	private Map<Marker, Ping> markerToPing = new HashMap<Marker, Ping>();
 	
 	public PingMap(FragmentActivity activity, int mapId)
 	{
@@ -32,14 +38,20 @@ public class PingMap
 			@Override
 			public void onInfoWindowClick(Marker marker)
 			{
+				Ping selectedPing = markerToPing.get(marker);
+				if(selectedPing != null)
+				{
+					FragmentTransaction ft = parentActivity.getSupportFragmentManager().beginTransaction();
+					ft.setCustomAnimations(R.anim.zoom_enter, R.anim.zoom_exit,R.anim.zoom_enter, R.anim.zoom_exit);
 
-				FragmentTransaction ft = parentActivity.getSupportFragmentManager().beginTransaction();
-				ft.setCustomAnimations(R.anim.zoom_enter, R.anim.zoom_exit,R.anim.zoom_enter, R.anim.zoom_exit);
+					PingFragment pingFrag = PingFragment.newInstance();
+					Bundle bundle = new Bundle();
+					bundle.putParcelable(PingFragment.PING_DATA, selectedPing);
+					pingFrag.setArguments(bundle);
 
-				PingFragment pingFrag = PingFragment.newInstance();
-
-				ft.replace(R.id.fragmentContainer, pingFrag, "pingFragment");
-				ft.addToBackStack(PingFragment.TAG).commit();
+					ft.replace(R.id.fragmentContainer, pingFrag, "pingFragment");
+					ft.addToBackStack(PingFragment.TAG).commit();
+				}
 			}
 		});
 	}
@@ -49,20 +61,14 @@ public class PingMap
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 13));
 	}
 	
-	public void addMarker(LatLng loc, String title, String snippet)
+	public void addPingMarker(Ping ping)
 	{
-		map.addMarker(new MarkerOptions()
-        .title(title)
-        .snippet(snippet)
-        .position(loc));
-	}
-	
-	public void addMarker(Ping ping)
-	{
-		map.addMarker(new MarkerOptions()
+		Marker marker = map.addMarker(new MarkerOptions()
 		.title(ping.getTitle())
 		.snippet(ping.getMessage())
 		.position(ping.getLocation()));
+		
+		markerToPing.put(marker, ping);
 	}
 	
 	public void demoMapOrigin()

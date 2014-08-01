@@ -55,8 +55,6 @@ public class MainActivity extends FragmentActivity implements PingInterface
 		{
 			pingApi = PingApi.getInstance(this, authToken);
 			map = new PingMap(this, R.id.map);
-			map.demoMapMarkers();
-			map.demoMapOrigin();
 			
 			LatLng loc = prefs.getLocation();
 			int radius = prefs.getRadius();
@@ -85,7 +83,7 @@ public class MainActivity extends FragmentActivity implements PingInterface
 			case Actions.NEW_PING:
 				Ping ping = bundle.getParcelable(BUNDLE_DATA);
 				map.moveCamera(ping.getLocation(), 13);
-				map.addMarker(ping);
+				map.addPingMarker(ping);
 				break;
 		}
 		

@@ -1,9 +1,5 @@
 package com.ping.models;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -18,6 +14,8 @@ public class Ping implements Parcelable
 	private double latitude;
 	private double longitude;
 	private String message;
+	private String authorName;
+	private String address;
 	
 	public static final String ID = "id";
 	public static final String TITLE = "title";
@@ -49,6 +47,12 @@ public class Ping implements Parcelable
 	
 	public void setLocation(LatLng loc) { latitude = loc.latitude; longitude = loc.longitude; }
 	public LatLng getLocation() { return new LatLng(latitude, longitude); }
+	
+	public void setAuthorName(String name) { authorName = name; }
+	public String getAuthorName() { return authorName; }
+	
+	public void setAddress(String add) { address = add; }
+	public String getAddress() { return address; }
 
 	@Override
 	public int describeContents() {
@@ -66,6 +70,8 @@ public class Ping implements Parcelable
 		dest.writeLong(getDuration());
 		dest.writeDouble(latitude);
 		dest.writeDouble(longitude);
+		dest.writeString(authorName);
+		dest.writeString(address);
 	}
 	
 	protected Ping(Parcel in)
@@ -76,5 +82,7 @@ public class Ping implements Parcelable
         setCreationTime(in.readLong());
         setDuration(in.readLong());
         setLocation(new LatLng(in.readDouble(), in.readDouble()));
+        setAuthorName(in.readString());
+        setAddress(in.readString());
     }
 }

@@ -48,16 +48,23 @@ public class NewPingFragment extends Fragment
 	}
 	
 	@Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
+		View view = inflater.inflate(R.layout.fragment_newping, container, false);
+		
+		title = (EditText) view.findViewById(R.id.title);
+		duration = (EditText) view.findViewById(R.id.duration);
+		address = (EditText) view.findViewById(R.id.address);
+		message = (EditText) view.findViewById(R.id.message);
+		submitButton = (Button) view.findViewById(R.id.submitPingButton);
+		
+		return view;
+	}
+	
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		FontTools.applyFont(getActivity(), getActivity().findViewById(R.id.root));
-		
-		title = (EditText) getActivity().findViewById(R.id.title);
-		duration = (EditText) getActivity().findViewById(R.id.duration);
-		address = (EditText) getActivity().findViewById(R.id.address);
-		message = (EditText) getActivity().findViewById(R.id.message);
-		submitButton = (Button) getActivity().findViewById(R.id.submitPingButton);
 		
 		prefs = PingPrefs.getInstance(getActivity());
 		pingApi = PingApi.getInstance(getActivity(), prefs.getAuthToken());
@@ -66,9 +73,11 @@ public class NewPingFragment extends Fragment
 			@Override
 			public void onClick(View v)
 			{
-				Ping ping = new Ping();
+				final Ping ping = new Ping();
 				ping.setTitle(title.getText().toString());
 				ping.setMessage(message.getText().toString());
+				ping.setAddress(address.getText().toString());
+				ping.setAuthorName("TODO. GET USER'S NAME FROM BACKEND. GET USER MODEL WHEN FIRST SIGNING IN!");
 				
 				Geocoder gc = new Geocoder(fragment.getActivity().getBaseContext());
 				try {
@@ -83,19 +92,19 @@ public class NewPingFragment extends Fragment
 							@Override
 							public void onCompleted(Exception e, Response<JsonObject> response)
 							{
-								//TODO: Add ping to map. (WITH ID! <-- should be returned by server!)
+								//TODO: add ID returned from server to ping before bundling
+								
+								Bundle b = new Bundle();
+								b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
+								b.putParcelable(MainActivity.BUNDLE_DATA, ping);
+								passData(b);
+								getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
 							}
 						});
 						
-						Bundle b = new Bundle();
-						b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
-						b.putParcelable(MainActivity.BUNDLE_DATA, ping);
-						passData(b);
-						getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
 					}
 					
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -113,11 +122,4 @@ public class NewPingFragment extends Fragment
 	    super.onAttach(a);
 	    dataPasser = (PingInterface) a;
 	}
-	
-	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-	{
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_newping, container, false);
-    }
 }
