@@ -41,6 +41,9 @@ public class NewPingFragment extends Fragment
 	private EditText message;
 	private Button submitButton;
 	
+	public static final String LATLNG_INCLUDED = "latlng_included";
+	public static final String BUNDLE_LATLNG = "bundle_latlng";
+	
 	public static NewPingFragment newInstance()
 	{
 		NewPingFragment frag = new NewPingFragment();
@@ -65,9 +68,12 @@ public class NewPingFragment extends Fragment
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		
+		FontTools.applyFont(getActivity(), getActivity().findViewById(R.id.root));
 		prefs = PingPrefs.getInstance(getActivity());
 		pingApi = PingApi.getInstance(getActivity(), prefs.getAuthToken());
+		
+		final Bundle bundle = getArguments();
+		final boolean includedLatLng = bundle.getBoolean(LATLNG_INCLUDED);
 		
 		submitButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -79,34 +85,45 @@ public class NewPingFragment extends Fragment
 				ping.setAddress(address.getText().toString());
 				ping.setAuthorName("TODO. GET USER'S NAME FROM BACKEND. GET USER MODEL WHEN FIRST SIGNING IN!");
 				
-				Geocoder gc = new Geocoder(fragment.getActivity().getBaseContext());
-				try {
-					List<Address> list = gc.getFromLocationName(address.getText().toString(), 1);
-					LatLng loc = new LatLng(list.get(0).getLatitude(), list.get(0).getLongitude());
-					
-					if(loc != null)
-					{
-						ping.setLocation(loc);
+				if(!includedLatLng)
+				{
+					Geocoder gc = new Geocoder(fragment.getActivity().getBaseContext());
+					try {
+						List<Address> list = gc.getFromLocationName(address.getText().toString(), 1);
+						LatLng loc = new LatLng(list.get(0).getLatitude(), list.get(0).getLongitude());
 						
-						pingApi.postNewPing(ping, new FutureCallback<Response<JsonObject>>(){
-							@Override
-							public void onCompleted(Exception e, Response<JsonObject> response)
-							{
-								//TODO: add ID returned from server to ping before bundling
-								
-								Bundle b = new Bundle();
-								b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
-								b.putParcelable(MainActivity.BUNDLE_DATA, ping);
-								passData(b);
-								getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-							}
-						});
-						
+						if(loc != null)
+						{
+							ping.setLocation(loc);
+							postNewPing(ping);
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
-					
-				} catch (IOException e) {
-					e.printStackTrace();
 				}
+				else
+				{
+					LatLng loc = bundle.getParcelable(BUNDLE_LATLNG);
+					ping.setLocation(loc);
+					postNewPing(ping);
+				}
+			}
+		});
+	}
+	
+	private void postNewPing(final Ping ping)
+	{
+		pingApi.postNewPing(ping, new FutureCallback<Response<JsonObject>>() {
+			@Override
+			public void onCompleted(Exception e, Response<JsonObject> response)
+			{
+				//TODO: add ID returned from server to ping before bundling
+				
+				Bundle b = new Bundle();
+				b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
+				b.putParcelable(MainActivity.BUNDLE_DATA, ping);
+				passData(b);
+				getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
 			}
 		});
 	}

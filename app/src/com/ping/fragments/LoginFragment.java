@@ -2,6 +2,7 @@ package com.ping.fragments;
 
 import com.ping.MainActivity;
 import com.ping.R;
+import com.ping.util.FontTools;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -63,6 +63,7 @@ public class LoginFragment extends Fragment
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
+		FontTools.applyFont(getActivity(), getActivity().findViewById(R.id.root));
 	}
 	
 	private void setupListeners(final Activity activity)

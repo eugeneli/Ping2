@@ -49,10 +49,12 @@ public class MainFragment extends Fragment
 				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
 				ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down,R.anim.slide_in_up, R.anim.slide_out_down);
 
-				NewPingFragment newFragment = NewPingFragment.newInstance();
+				NewPingFragment newPingFrag = NewPingFragment.newInstance();
+				Bundle bundle = new Bundle();
+				bundle.putBoolean(NewPingFragment.LATLNG_INCLUDED, false);
+				newPingFrag.setArguments(bundle);
 
-				ft.replace(R.id.fragmentContainer, newFragment, "loginFragment");
-
+				ft.replace(R.id.fragmentContainer, newPingFrag, null);
 				ft.addToBackStack(NewPingFragment.TAG).commit();
 			}
 		});

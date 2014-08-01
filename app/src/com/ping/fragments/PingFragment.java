@@ -2,6 +2,7 @@ package com.ping.fragments;
 
 import com.ping.R;
 import com.ping.models.Ping;
+import com.ping.util.FontTools;
 
 import android.os.Bundle;
 import android.os.Parcel;
@@ -48,6 +49,7 @@ public class PingFragment extends Fragment
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
+		FontTools.applyFont(getActivity(), getActivity().findViewById(R.id.root));
 		
 		Bundle bundle = getArguments();
 		Ping ping = bundle.getParcelable(PING_DATA);
