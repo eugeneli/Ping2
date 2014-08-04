@@ -96,7 +96,7 @@ public class PingMap
 	
 	public void moveCamera(LatLng loc, int zoom)
 	{
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 13));
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, zoom));
 	}
 	
 	public void addPingMarker(Ping ping)

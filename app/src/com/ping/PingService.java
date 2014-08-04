@@ -89,6 +89,6 @@ public class PingService extends Service
 
 	   AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 	   alarm.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*60, pendingIntent);
-	   //Run every minute for testing purposes
+	   //Run every minute (1000*60) for testing purposes
 	}
 }

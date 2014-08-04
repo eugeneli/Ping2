@@ -26,7 +26,6 @@ public class PingApi
 
 	public static PingApi getInstance(Context context, String authToken)
 	{ 
-		//save these parameters so you don't have to pass them into each API call!
 		if(instance == null)
 			instance = new PingApi(context, authToken);
 		return instance;
