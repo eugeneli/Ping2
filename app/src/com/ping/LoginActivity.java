@@ -264,7 +264,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 			@Override
 			protected Object doInBackground(Object... params)
 			{
-				String serverClientId = getResources().getString(R.string.serverClientId);
+				String serverClientId = resources.getString(R.string.serverClientId);
 				String scope = "audience:server:client_id:"+ serverClientId;// +":api_scope:" + Scopes.PLUS_LOGIN + " https://www.googleapis.com/auth/plus.profile.emails.read";
 				
 				try {

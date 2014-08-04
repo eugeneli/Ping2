@@ -1,4 +1,4 @@
- package com.ping;
+package com.ping;
 
 import java.util.Calendar;
 
