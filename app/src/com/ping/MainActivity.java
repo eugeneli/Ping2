@@ -1,11 +1,14 @@
 package com.ping;
 
+import java.util.Iterator;
+
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
-import com.ping.fragments.MainFragment;
-import com.ping.fragments.NewPingFragment;
 import com.ping.interfaces.PingInterface;
 import com.ping.models.Ping;
 import com.ping.models.PingMap;
@@ -16,11 +19,8 @@ import com.ping.util.PingPrefs;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.view.View;
+
 import android.view.Window;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 
 public class MainActivity extends FragmentActivity implements PingInterface
 {	
@@ -30,9 +30,7 @@ public class MainActivity extends FragmentActivity implements PingInterface
 	private PingApi pingApi;
 	private PingPrefs prefs;
 	private String authToken;
-	private MainFragment mainFragment;
 	
-	public static final String AUTH_TOKEN_BUNDLE = "bundle";
 	public static final String BUNDLE_ACTION = "bundle_action";
 	public static final String BUNDLE_DATA = "bundle_data";
 	
@@ -62,7 +60,17 @@ public class MainActivity extends FragmentActivity implements PingInterface
 				@Override
 				public void onCompleted(Exception e, Response<JsonObject> response)
 				{
-					//TODO: Loop through response and place pings on map
+					JsonArray pingsJson = response.getResult().getAsJsonArray(PingApi.RESPONSE);
+					Iterator<JsonElement> iterator = pingsJson.iterator();
+
+					while(iterator.hasNext())
+					{
+					    JsonElement pingJson = (JsonElement) iterator.next();
+					    Gson gson = new Gson();
+					    Ping ping = gson.fromJson(pingJson, Ping.class);
+
+					    map.addPingMarker(ping);
+					}
 				}
 			});
 			
@@ -86,6 +94,5 @@ public class MainActivity extends FragmentActivity implements PingInterface
 				map.addPingMarker(ping);
 				break;
 		}
-		
 	}
 }

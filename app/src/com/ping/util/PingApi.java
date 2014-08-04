@@ -17,10 +17,21 @@ public class PingApi
 	private String authToken;
 
 	private final static String PING_AUTHTOKEN_HEADER = "Auth-Token";
+	private final static String NODE = "node";
 	
-	public final static String RESPONSE_STATUS = "success";
-	public final static String RESPONSE_ERROR_MESSAGE = "message";
-	public final static String DATA = "data";
+	public final static String RESPONSE = "response";
+	public final static String ERROR = "error";
+	public final static String ERROR_DESCRIPTION = "error_description";
+	
+	public final static String JSON_AUTHTOKEN = "auth_token";
+	
+	public final static int HTTP_SUCCESS = 200;
+	public final static int HTTP_AUTH_FAIL = 401;
+	public final static int HTTP_INVALID_ACCESS_TOKEN = 422;
+	public final static int HTTP_INVALID_RESOURCE = 200;
+	public final static int HTTP_NOT_FOUND = 404;
+	public final static int HTTP_UNAUTHENTICATED = 404;
+	public final static int HTTP_WRONG_PROVIDER = 422;
 	
 	private static PingApi instance = null;
 
@@ -65,15 +76,15 @@ public class PingApi
 	public void postNewPing(Ping ping, FutureCallback<Response<JsonObject>> callback)
 	{
 		JsonObject json = new JsonObject();
-		JsonObject data = new JsonObject();
+		JsonObject node = new JsonObject();
 		
-		data.addProperty(Ping.DURATION, ping.getDuration());
-		data.addProperty(Ping.LATITUDE, ping.getLocation().latitude);
-		data.addProperty(Ping.LONGITUDE, ping.getLocation().longitude);
-		data.addProperty(Ping.TITLE, ping.getTitle());
-		data.addProperty(Ping.MESSAGE, ping.getMessage());
+		//node.addProperty(Ping.DURATION, ping.getDuration());
+		node.addProperty(Ping.LATITUDE, ping.getLocation().latitude);
+		node.addProperty(Ping.LONGITUDE, ping.getLocation().longitude);
+		node.addProperty(Ping.TITLE, ping.getTitle());
+		node.addProperty(Ping.MESSAGE, ping.getMessage());
 		
-		json.add(DATA, data);
+		json.add(NODE, node);
 		
 		Ion.with(context)
 		.load("POST", PingApiUrls.pingsUrl())
@@ -87,12 +98,14 @@ public class PingApi
 	public void updatePing(String authToken, Ping ping, FutureCallback<Response<JsonObject>> callback)
 	{
 		JsonObject json = new JsonObject();
-		JsonObject data = new JsonObject();
+		JsonObject node = new JsonObject();
 
-		data.addProperty(Ping.TITLE, ping.getTitle());
-		data.addProperty(Ping.MESSAGE, ping.getMessage());
+		node.addProperty(Ping.LATITUDE, ping.getLocation().latitude);
+		node.addProperty(Ping.LONGITUDE, ping.getLocation().longitude);
+		node.addProperty(Ping.TITLE, ping.getTitle());
+		node.addProperty(Ping.MESSAGE, ping.getMessage());
 		
-		json.add(DATA, data);
+		json.add(NODE, node);
 		
 		Ion.with(context)
 		.load("PUT", PingApiUrls.getPingByIdUrl(ping.getId()))
@@ -116,12 +129,9 @@ public class PingApi
 	public void userOAuthLogin(String oAuthProvider, String oAuthAccessToken, FutureCallback<Response<JsonObject>> callback)
 	{
 		JsonObject json = new JsonObject();
-		JsonObject data = new JsonObject();
 
-		data.addProperty("oauth", oAuthProvider);
-		data.addProperty("token", oAuthAccessToken);
-		
-		json.add(DATA, data);
+		json.addProperty("provider", oAuthProvider);
+		json.addProperty("token", oAuthAccessToken);
 		
 		Ion.with(context)
 		.load("POST", PingApiUrls.userLoginUrl())
@@ -133,7 +143,7 @@ public class PingApi
 	
 	public void userNormalLogin(String username, String password, FutureCallback<Response<JsonObject>> callback)
 	{
-		JsonObject json = new JsonObject();
+		/*JsonObject json = new JsonObject();
 		JsonObject data = new JsonObject();
 
 		data.addProperty("username", username);
@@ -144,6 +154,15 @@ public class PingApi
 		Ion.with(context)
 		.load("POST", PingApiUrls.userLoginUrl())
 		.setJsonObjectBody(json)
+		.asJsonObject()
+		.withResponse()
+		.setCallback(callback);*/
+	}
+	
+	public void userLogout(FutureCallback<Response<JsonObject>> callback)
+	{
+		Ion.with(context)
+		.load("DELETE", PingApiUrls.userLogoutUrl())
 		.asJsonObject()
 		.withResponse()
 		.setCallback(callback);
@@ -168,5 +187,4 @@ public class PingApi
 		.withResponse()
 		.setCallback(callback);
 	}
-	
 }

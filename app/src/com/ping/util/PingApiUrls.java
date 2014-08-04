@@ -4,10 +4,11 @@ public class PingApiUrls
 {
 	@SuppressWarnings("unused")
 	private final static String TAG = PingApiUrls.class.getSimpleName();
-	private final static String SERVER_URL = "";
+	private final static String SERVER_URL = "/1";
 
-	private final static String USER_PATH = "/user";
-	private final static String USERLOGIN_PATH = "/user/login";
+	private final static String USER_PATH = "/users";
+	private final static String USERLOGIN_PATH = "/login";
+	private final static String USERLOGOUT_PATH = "/logout";
 	private final static String PINGS_PATH = "/pings";
 	
 	public static String getPingsInAreaUrl(double lat, double lng, int radius)
@@ -33,6 +34,11 @@ public class PingApiUrls
 	public static String userLoginUrl()
 	{
 		return SERVER_URL + USERLOGIN_PATH;
+	}
+	
+	public static String userLogoutUrl()
+	{
+		return SERVER_URL + USERLOGOUT_PATH;
 	}
 	
 	public static String getUserByIdUrl(int id)

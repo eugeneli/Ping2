@@ -117,7 +117,8 @@ public class NewPingFragment extends Fragment
 			@Override
 			public void onCompleted(Exception e, Response<JsonObject> response)
 			{
-				//TODO: add ID returned from server to ping before bundling
+				JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+				ping.setId(jsonResponse.get(Ping.ID).getAsInt());
 				
 				Bundle b = new Bundle();
 				b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);

@@ -44,6 +44,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	
 	private PingMap map;
 	private PingApi pingApi;
+	private PingPrefs prefs;
 	private Resources resources;
 	private ProgressDialog progress;
 	
@@ -71,6 +72,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 		FontTools.applyFont(this, findViewById(R.id.root));
 		
 		pingApi = PingApi.getInstance(this, null);
+		prefs = PingPrefs.getInstance(this);
 		map = new PingMap(this, R.id.map);
 		map.demoMapOrigin();
 		
@@ -120,43 +122,50 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	
 	public PingMap getMap() { return map; }
 	
-	public void loginWithOAuth(String oAuthProvider, String oAuthAccessToken)
+	public void loginWithOAuth(String oAuthProvider, final String oAuthAccessToken)
 	{
+		final Context context = this;
 		progress.dismiss();
 		if(oAuthProvider.equals(GOOGLE_PLUS))
 		{
 			Log.d(TAG, oAuthProvider + " - " + oAuthAccessToken);
-			Bundle bundle = new Bundle();
-			bundle.putString(GOOGLE_PLUS, oAuthAccessToken);
-			Intent intent = new Intent(this, MainActivity.class);
-			intent.putExtra("bundle", bundle);
-			startActivity(intent);
-			
-			/*pingApi.userLogin(oAuthProvider, oAuthAccessToken, new FutureCallback<Response<JsonObject>>(){
+			pingApi.userOAuthLogin(oAuthProvider, oAuthAccessToken, new FutureCallback<Response<JsonObject>>(){
 				@Override
 				public void onCompleted(Exception e, Response<JsonObject> response)
 				{
-					
+					if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
+					{
+						JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+						String authToken = jsonResponse.get(PingApi.JSON_AUTHTOKEN).getAsString();
+						prefs.setAuthToken(authToken);
+						pingApi.setAuthToken(authToken);
+
+						Intent intent = new Intent(context, MainActivity.class);
+						startActivity(intent);
+					}
 				}
-			});*/
-			
-			PingPrefs prefs = PingPrefs.getInstance(this);
-			prefs.setAuthToken("asd");
-			
+			});
 			finish();
 		}
 		else if(oAuthProvider.equals(FACEBOOK))
 		{
 			Log.d(TAG, oAuthProvider + " - " + oAuthAccessToken);
-			Bundle bundle = new Bundle();
-			bundle.putString(FACEBOOK, oAuthAccessToken);
-			Intent intent = new Intent(this, MainActivity.class);
-			intent.putExtra("bundle", bundle);
-			startActivity(intent);
-			
-			PingPrefs prefs = PingPrefs.getInstance(this);
-			prefs.setAuthToken("asd");
-			
+			pingApi.userOAuthLogin(oAuthProvider, oAuthAccessToken, new FutureCallback<Response<JsonObject>>(){
+				@Override
+				public void onCompleted(Exception e, Response<JsonObject> response)
+				{
+					if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
+					{
+						JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+						String authToken = jsonResponse.get(PingApi.JSON_AUTHTOKEN).getAsString();
+						prefs.setAuthToken(authToken);
+						pingApi.setAuthToken(authToken);
+						
+						Intent intent = new Intent(context, MainActivity.class);
+						startActivity(intent);
+					}
+				}
+			});
 			finish();
 		}
 	}
