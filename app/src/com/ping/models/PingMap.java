@@ -83,15 +83,11 @@ public class PingMap
 				ft.addToBackStack(PingFragment.TAG).commit();
 			}
 		});
-		
-		map.setOnCameraChangeListener(new OnCameraChangeListener() {
-			@Override
-			public void onCameraChange(CameraPosition position)
-			{
-				prefs.setLocation(position.target);
-				prefs.setRadius((int) position.zoom);
-			}
-		});
+	}
+	
+	public void setOnCameraChangeListener(OnCameraChangeListener ocl)
+	{
+		map.setOnCameraChangeListener(ocl);
 	}
 	
 	public void moveCamera(LatLng loc, int zoom)

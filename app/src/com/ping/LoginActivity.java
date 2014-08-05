@@ -1,6 +1,7 @@
 package com.ping;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -23,6 +24,7 @@ import com.koushikdutta.ion.Response;
 import com.ping.models.PingMap;
 import com.ping.util.FontTools;
 import com.ping.util.PingApi;
+import com.ping.util.PingApiUrls;
 import com.ping.util.PingPrefs;
 
 import android.support.v4.app.FragmentActivity;
@@ -71,7 +73,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 		setContentView(R.layout.activity_login);
 		FontTools.applyFont(this, findViewById(R.id.root));
 		
-		pingApi = PingApi.getInstance(this, null);
+		pingApi = PingApi.getInstance(getBaseContext(), null);
 		prefs = PingPrefs.getInstance(this);
 		map = new PingMap(this, R.id.map);
 		map.demoMapOrigin();
@@ -103,6 +105,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 		});
 		
 		loginButton = (LoginButton) findViewById(R.id.fbLogin);
+		loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
 		uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
         loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
@@ -139,6 +142,8 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 						String authToken = jsonResponse.get(PingApi.JSON_AUTHTOKEN).getAsString();
 						prefs.setAuthToken(authToken);
 						pingApi.setAuthToken(authToken);
+						
+						Log.d(TAG, authToken);
 
 						Intent intent = new Intent(context, MainActivity.class);
 						startActivity(intent);
@@ -149,6 +154,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 		}
 		else if(oAuthProvider.equals(FACEBOOK))
 		{
+			Log.d(TAG, PingApiUrls.userLoginUrl());
 			Log.d(TAG, oAuthProvider + " - " + oAuthAccessToken);
 			pingApi.userOAuthLogin(oAuthProvider, oAuthAccessToken, new FutureCallback<Response<JsonObject>>(){
 				@Override
@@ -160,6 +166,8 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 						String authToken = jsonResponse.get(PingApi.JSON_AUTHTOKEN).getAsString();
 						prefs.setAuthToken(authToken);
 						pingApi.setAuthToken(authToken);
+						
+						Log.d(TAG, authToken);
 						
 						Intent intent = new Intent(context, MainActivity.class);
 						startActivity(intent);

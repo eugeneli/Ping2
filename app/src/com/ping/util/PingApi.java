@@ -7,10 +7,10 @@ import com.koushikdutta.ion.Response;
 import com.ping.models.Ping;
 
 import android.content.Context;
+import android.util.Log;
 
 public class PingApi
 {
-	@SuppressWarnings("unused")
 	private final static String TAG = PingApi.class.getSimpleName();
 	
 	private Context context;
@@ -57,6 +57,7 @@ public class PingApi
 	{
 		Ion.with(context)
 		.load("GET", PingApiUrls.getPingsInAreaUrl(latitude, longitude, radius))
+		.setLogging(TAG, Log.VERBOSE)
 		.addHeader(PING_AUTHTOKEN_HEADER, authToken)
 		.asJsonObject()
 		.withResponse()
@@ -119,7 +120,7 @@ public class PingApi
 	public void getUser(FutureCallback<Response<JsonObject>> callback)
 	{
 		Ion.with(context)
-		.load("GET", PingApiUrls.userUrl())
+		.load("GET", PingApiUrls.userSelfUrl())
 		.addHeader(PING_AUTHTOKEN_HEADER, authToken)
 		.asJsonObject()
 		.withResponse()
@@ -135,6 +136,7 @@ public class PingApi
 		
 		Ion.with(context)
 		.load("POST", PingApiUrls.userLoginUrl())
+		.setLogging(TAG, Log.VERBOSE)
 		.setJsonObjectBody(json)
 		.asJsonObject()
 		.withResponse()

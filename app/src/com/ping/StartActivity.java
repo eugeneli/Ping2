@@ -10,10 +10,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
+import android.widget.Toast;
 
 public class StartActivity extends Activity
 {
+	public static final String TAG = StartActivity.class.getSimpleName();
 	private PingApi pingApi;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -31,21 +34,31 @@ public class StartActivity extends Activity
 		}
 		else
 		{
-			pingApi = PingApi.getInstance(this, prefs.getAuthToken());
+			pingApi = PingApi.getInstance(getBaseContext(), prefs.getAuthToken());
 			pingApi.getUser(new FutureCallback<Response<JsonObject>>() {
 				@Override
 				public void onCompleted(Exception e, Response<JsonObject> response)
 				{
-					if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
-					{
-						Intent intent = new Intent(context, MainActivity.class);
-						startActivity(intent);
+					Intent intent = new Intent(context, MainActivity.class);
+					startActivity(intent);
+					/*try {
+						if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
+						{
+							Intent intent = new Intent(context, MainActivity.class);
+							startActivity(intent);
+						}
+						else
+						{
+							Intent intent = new Intent(context, LoginActivity.class);
+							startActivity(intent);
+						}
 					}
-					else
+					catch(NullPointerException npe)
 					{
+						Toast.makeText(getApplicationContext(), "Couldn't connect to Ping server", Toast.LENGTH_LONG).show();
 						Intent intent = new Intent(context, LoginActivity.class);
 						startActivity(intent);
-					}
+					}*/
 				}
 			});
 		}
