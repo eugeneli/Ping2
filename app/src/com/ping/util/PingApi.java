@@ -42,6 +42,11 @@ public class PingApi
 		return instance;
 	}
 	
+	public static PingApi getInstance(Context context)
+	{
+		return getInstance(null);
+	}
+	
 	private PingApi(Context c, String token)
 	{
 		context = c;

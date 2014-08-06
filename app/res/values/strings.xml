@@ -13,9 +13,12 @@
     <string name="addressHint">Address (Optional)</string>
     <string name="submitPing">Ping it!</string>
     
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+    
     <string name="gplusLoadingTitle">Give us a second…</string>
     <string name="gplusLoadingMessage">Signing you in via Google+</string>
-    <string name="serverClientId">795269385456-7kjnqtdmovr7tsd9udnsfgmnclps4cur.apps.googleusercontent.com</string>
+    <string name="serverClientId">795269385456–7kjnqtdmovr7tsd9udnsfgmnclps4cur.apps.googleusercontent.com</string>
 
     <string name="app_id">1513182342246142</string>
 </resources>

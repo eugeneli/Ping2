@@ -55,7 +55,7 @@ public class PingService extends Service
         Log.i(TAG, "Service started");
         
 		LatLng loc = prefs.getLocation();
-		int radius = prefs.getRadius();
+		int radius = prefs.getZoom();
 		
 		pingApi.getPingsInArea(loc.latitude, loc.longitude, radius, new FutureCallback<Response<JsonObject>>() {
 			@Override

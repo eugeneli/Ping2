@@ -13,11 +13,9 @@ import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.ping.MainActivity;
 import com.ping.R;
 import com.ping.fragments.NewPingFragment;
 import com.ping.fragments.PingFragment;
@@ -43,7 +41,7 @@ public class PingMap
 		
 		map.setMyLocationEnabled(true);
 		
-		//map.moveCamera(CameraUpdateFactory.newLatLngZoom(prefs.getLocation(), DEFAULT_ZOOM));
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(prefs.getLocation(), DEFAULT_ZOOM));
 		
 		map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 			@Override

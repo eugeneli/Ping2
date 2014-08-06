@@ -27,15 +27,16 @@ public class MainFragment extends Fragment
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        addPingButton = (ImageButton) view.findViewById(R.id.addButton);
+        
+        return view;
     }
 	
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
 		super.onActivityCreated(savedInstanceState);
-		
-		addPingButton = (ImageButton) getActivity().findViewById(R.id.addButton);
 		
 		setupListeners();
 	}

@@ -58,7 +58,7 @@ public class MainActivity extends FragmentActivity implements PingInterface
 			map = new PingMap(this, R.id.map);
 			
 			LatLng loc = prefs.getLocation();
-			int radius = prefs.getRadius();
+			int radius = prefs.getZoom();
 			pingApi.getPingsInArea(loc.longitude, loc.latitude, radius*100, new FutureCallback<Response<JsonObject>>(){
 				@Override
 				public void onCompleted(Exception e, Response<JsonObject> response)
@@ -84,9 +84,9 @@ public class MainActivity extends FragmentActivity implements PingInterface
 				public void onCameraChange(CameraPosition position)
 				{
 					prefs.setLocation(position.target);
-					prefs.setRadius((int) position.zoom);
+					prefs.setZoom((int) position.zoom);
 					
-					pingApi.getPingsInArea(position.target.latitude, position.target.longitude, (int)position.zoom*100, new FutureCallback<Response<JsonObject>>(){
+					pingApi.getPingsInArea(position.target.latitude, position.target.longitude, (int)position.zoom*500, new FutureCallback<Response<JsonObject>>(){
 						@Override
 						public void onCompleted(Exception e, Response<JsonObject> response)
 						{

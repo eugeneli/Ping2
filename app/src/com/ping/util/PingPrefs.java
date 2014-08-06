@@ -12,8 +12,8 @@ public class PingPrefs
 	private static final String PING_AUTH_TOKEN_KEY = APP_NAME + ".authToken";
 	private static final String USER_LATITUDE = APP_NAME + ".latitude";
 	private static final String USER_LONGITUDE = APP_NAME + ".longitude";
-	private static final String USER_RADIUS = APP_NAME + ".radius";
-	
+	private static final String USER_ZOOM = APP_NAME + ".zoom";
+
 	private static PingPrefs instance = null;
 
 	public static PingPrefs getInstance(Context context)
@@ -52,13 +52,13 @@ public class PingPrefs
 		prefs.edit().putFloat(USER_LONGITUDE, (float) loc.longitude).commit();
 	}
 	
-	public int getRadius()
+	public int getZoom()
 	{
-		return prefs.getInt(USER_RADIUS, 0);
+		return prefs.getInt(USER_ZOOM, 0);
 	}
 	
-	public void setRadius(int rad)
+	public void setZoom(int rad)
 	{
-		prefs.edit().putInt(USER_RADIUS, rad).commit();
+		prefs.edit().putInt(USER_ZOOM, rad).commit();
 	}
 }

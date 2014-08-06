@@ -120,7 +120,6 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
             	}
             }
         });
-		
 	}
 	
 	public PingMap getMap() { return map; }
