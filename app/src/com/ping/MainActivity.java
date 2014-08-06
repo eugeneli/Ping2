@@ -59,23 +59,11 @@ public class MainActivity extends FragmentActivity implements PingInterface
 			
 			LatLng loc = prefs.getLocation();
 			int radius = prefs.getZoom();
-			pingApi.getPingsInArea(loc.longitude, loc.latitude, radius*100, new FutureCallback<Response<JsonObject>>(){
+			pingApi.getPingsInArea(loc.latitude, loc.longitude, radius*500, new FutureCallback<Response<JsonObject>>(){
 				@Override
 				public void onCompleted(Exception e, Response<JsonObject> response)
 				{
-					JsonArray pingsJson = response.getResult().getAsJsonArray(PingApi.RESPONSE);
-					Log.d(TAG, pingsJson.toString());
-					Iterator<JsonElement> iterator = pingsJson.iterator();
-
-					while(iterator.hasNext())
-					{
-					    JsonElement pingJson = (JsonElement) iterator.next();
-					    Gson gson = new Gson();
-					    Ping ping = gson.fromJson(pingJson, Ping.class);
-
-					    map.addPingMarker(ping);
-					}
-					
+					addPingsToMap(response);
 				}
 			});
 			
@@ -90,18 +78,7 @@ public class MainActivity extends FragmentActivity implements PingInterface
 						@Override
 						public void onCompleted(Exception e, Response<JsonObject> response)
 						{
-							JsonArray pingsJson = response.getResult().getAsJsonArray(PingApi.RESPONSE);
-							Log.d(TAG, pingsJson.toString());
-							Iterator<JsonElement> iterator = pingsJson.iterator();
-
-							while(iterator.hasNext())
-							{
-							    JsonElement pingJson = (JsonElement) iterator.next();
-							    Gson gson = new Gson();
-							    Ping ping = gson.fromJson(pingJson, Ping.class);
-
-							    map.addPingMarker(ping);
-							}
+							addPingsToMap(response);
 						}
 					});
 				}
@@ -113,6 +90,34 @@ public class MainActivity extends FragmentActivity implements PingInterface
 		{
 			Intent intent = new Intent(this, LoginActivity.class);
 			startActivity(intent);
+		}
+	}
+	
+	private void addPingsToMap(Response<JsonObject> response)
+	{
+		if(response != null)
+		{
+			try {
+				JsonArray pingsJson = response.getResult().getAsJsonArray(PingApi.RESPONSE);
+				Log.d(TAG, pingsJson.toString());
+				Iterator<JsonElement> iterator = pingsJson.iterator();
+
+				while(iterator.hasNext())
+				{
+				    JsonElement pingJson = (JsonElement) iterator.next();
+				    Gson gson = new Gson();
+				    Ping ping = gson.fromJson(pingJson, Ping.class);
+				    
+				    System.out.println("ASD: "+ ping.getId());
+				    System.out.println(ping.getCreatorId());
+
+				    map.addPingMarker(ping);
+				}
+			}
+			catch(NullPointerException npe)
+			{
+				
+			}
 		}
 	}
 

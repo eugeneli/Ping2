@@ -13,6 +13,8 @@ public class PingPrefs
 	private static final String USER_LATITUDE = APP_NAME + ".latitude";
 	private static final String USER_LONGITUDE = APP_NAME + ".longitude";
 	private static final String USER_ZOOM = APP_NAME + ".zoom";
+	
+	private static final int DEFAULT_ZOOM = 2;
 
 	private static PingPrefs instance = null;
 
@@ -48,13 +50,13 @@ public class PingPrefs
 	
 	public void setLocation(LatLng loc)
 	{
-		prefs.edit().putFloat(USER_LATITUDE, (float) loc.latitude);
+		prefs.edit().putFloat(USER_LATITUDE, (float) loc.latitude).commit();
 		prefs.edit().putFloat(USER_LONGITUDE, (float) loc.longitude).commit();
 	}
 	
 	public int getZoom()
 	{
-		return prefs.getInt(USER_ZOOM, 0);
+		return prefs.getInt(USER_ZOOM, DEFAULT_ZOOM);
 	}
 	
 	public void setZoom(int rad)

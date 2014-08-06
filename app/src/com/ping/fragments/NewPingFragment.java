@@ -46,8 +46,7 @@ public class NewPingFragment extends Fragment
 	
 	public static NewPingFragment newInstance()
 	{
-		NewPingFragment frag = new NewPingFragment();
-	    return frag;
+		return new NewPingFragment();
 	}
 	
 	@Override
@@ -82,8 +81,8 @@ public class NewPingFragment extends Fragment
 				final Ping ping = new Ping();
 				ping.setTitle(title.getText().toString());
 				ping.setMessage(message.getText().toString());
-				ping.setAddress(address.getText().toString());
-				ping.setAuthorName("TODO. GET USER'S NAME FROM BACKEND. GET USER MODEL WHEN FIRST SIGNING IN!");
+				//ping.setAddress(address.getText().toString());
+				//ping.setAuthorName("TODO. GET USER'S NAME FROM BACKEND. GET USER MODEL WHEN FIRST SIGNING IN!");
 				
 				if(!includedLatLng)
 				{

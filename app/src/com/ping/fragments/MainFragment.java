@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 public class MainFragment extends Fragment
@@ -17,11 +16,11 @@ public class MainFragment extends Fragment
 	public static final String TAG = MainFragment.class.getSimpleName();
 	
 	private ImageButton addPingButton;
+	private ImageButton settingsButton;
 	
 	public static MainFragment newInstance() 
 	{
-		MainFragment frag = new MainFragment();
-	    return frag;
+		return new MainFragment();
 	}
 	
 	@Override
@@ -29,6 +28,7 @@ public class MainFragment extends Fragment
 	{
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         addPingButton = (ImageButton) view.findViewById(R.id.addButton);
+        settingsButton = (ImageButton) view.findViewById(R.id.settingsButton);
         
         return view;
     }
@@ -43,6 +43,20 @@ public class MainFragment extends Fragment
 	
 	private void setupListeners()
 	{
+		settingsButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+				ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down,R.anim.slide_in_up, R.anim.slide_out_down);
+
+				SettingsFragment settingsFrag = SettingsFragment.newInstance();
+
+				ft.replace(R.id.fragmentContainer, settingsFrag, null);
+				ft.addToBackStack(NewPingFragment.TAG).commit();
+			}
+		});
+		
 		addPingButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v)

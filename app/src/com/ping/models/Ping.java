@@ -8,18 +8,21 @@ import com.google.android.gms.maps.model.LatLng;
 public class Ping implements Parcelable
 {
 	private int id;
+	private int creatorId;
 	private String title;
-	private long creationTime;
-	private long duration;
+	private String message;
+	//private long creationTime;
+	//private long duration;
 	private double latitude;
 	private double longitude;
-	private String message;
-	private String authorName;
-	private String address;
+	
+	//private String authorName;
+	//private String address;
 	
 	public static final String ID = "id";
 	public static final String TITLE = "title";
 	public static final String CREATED_AT = "createdAt";
+	public static final String CREATOR_ID = "user_id";
 	public static final String DURATION = "duration";
 	public static final String LATITUDE = "latitude";
 	public static final String LONGITUDE = "longitude";
@@ -30,17 +33,34 @@ public class Ping implements Parcelable
 		//TODO
 	}
 	
+	public static final Parcelable.Creator<Ping> CREATOR = new Parcelable.Creator<Ping>()
+	{
+	    @Override
+	    public Ping createFromParcel(Parcel source) {
+	    	return new Ping(source);
+	    }
+
+		@Override
+		public Ping[] newArray(int size) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+	};
+	
 	public void setId(int pingid) { id = pingid; }
 	public int getId() { return id; }
 	
 	public void setTitle(String t) { title = t; }
 	public String getTitle() { return title; }
 	
-	public void setCreationTime(long time) { creationTime = time; }
-	public long getCreationTime() { return creationTime; }
+	//public void setCreationTime(long time) { creationTime = time; }
+	//public long getCreationTime() { return creationTime; }
 	
-	public void setDuration(long dur) { duration = dur; }
-	public long getDuration() { return duration; }
+	public void setCreatorId(int cid) { creatorId = cid; }
+	public int getCreatorId() { return creatorId; }
+	
+	//public void setDuration(long dur) { duration = dur; }
+	//public long getDuration() { return duration; }
 	
 	public void setMessage(String des) { message = des; }
 	public String getMessage() { return message; }
@@ -48,11 +68,11 @@ public class Ping implements Parcelable
 	public void setLocation(LatLng loc) { latitude = loc.latitude; longitude = loc.longitude; }
 	public LatLng getLocation() { return new LatLng(latitude, longitude); }
 	
-	public void setAuthorName(String name) { authorName = name; }
-	public String getAuthorName() { return authorName; }
+	//public void setAuthorName(String name) { authorName = name; }
+	//public String getAuthorName() { return authorName; }
 	
-	public void setAddress(String add) { address = add; }
-	public String getAddress() { return address; }
+	//public void setAddress(String add) { address = add; }
+	//public String getAddress() { return address; }
 
 	@Override
 	public int describeContents() {
@@ -64,25 +84,27 @@ public class Ping implements Parcelable
 	public void writeToParcel(Parcel dest, int flags)
 	{
 		dest.writeInt(getId());
+		dest.writeInt(getCreatorId());
 		dest.writeString(getTitle());
 		dest.writeString(getMessage());
-		dest.writeLong(getCreationTime());
-		dest.writeLong(getDuration());
+		//dest.writeLong(getCreationTime());
+		//dest.writeLong(getDuration());
 		dest.writeDouble(latitude);
 		dest.writeDouble(longitude);
-		dest.writeString(authorName);
-		dest.writeString(address);
+		//dest.writeString(authorName);
+		//dest.writeString(address);
 	}
 	
 	protected Ping(Parcel in)
 	{
         setId(in.readInt());
+        setCreatorId(in.readInt());
         setTitle(in.readString());
         setMessage(in.readString());
-        setCreationTime(in.readLong());
-        setDuration(in.readLong());
+        //setCreationTime(in.readLong());
+        //setDuration(in.readLong());
         setLocation(new LatLng(in.readDouble(), in.readDouble()));
-        setAuthorName(in.readString());
-        setAddress(in.readString());
+        //setAuthorName(in.readString());
+        //setAddress(in.readString());
     }
 }

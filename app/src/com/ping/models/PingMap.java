@@ -13,6 +13,7 @@ import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -28,21 +29,19 @@ public class PingMap
 	private PingPrefs prefs;
 	private Map<Marker, Ping> markerToPing = new HashMap<Marker, Ping>();
 	
-	private static final int DEFAULT_ZOOM = 13;
-	
 	public PingMap(FragmentActivity activity, int mapId)
 	{
 		parentActivity = activity;
 		prefs = PingPrefs.getInstance(activity);
 		map = ((SupportMapFragment) parentActivity.getSupportFragmentManager().findFragmentById(mapId)).getMap();
 		
-		map.getUiSettings().setZoomControlsEnabled(false);
+		map.getUiSettings().setZoomControlsEnabled(true);
 		map.getUiSettings().setMyLocationButtonEnabled(false);
 		
 		map.setMyLocationEnabled(true);
 		
-		map.moveCamera(CameraUpdateFactory.newLatLngZoom(prefs.getLocation(), DEFAULT_ZOOM));
-		
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(prefs.getLocation(), prefs.getZoom()));
+
 		map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 			@Override
 			public void onInfoWindowClick(Marker marker)
@@ -98,7 +97,8 @@ public class PingMap
 		Marker marker = map.addMarker(new MarkerOptions()
 		.title(ping.getTitle())
 		.snippet(ping.getMessage())
-		.position(ping.getLocation()));
+		.position(ping.getLocation())
+		.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
 		
 		markerToPing.put(marker, ping);
 	}

@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/SemiTransBluePanel"
+    style="@style/SemiTransWhitePanel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -78,6 +78,7 @@
         android:layout_below="@+id/title"
         android:layout_alignRight="@+id/title"
         android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
         android:background="@android:color/darker_gray" />
    
     <View
@@ -87,6 +88,7 @@
         android:layout_alignRight="@+id/duration"
         android:layout_below="@+id/duration"
         android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
         android:background="@android:color/darker_gray" />
 
 </RelativeLayout>

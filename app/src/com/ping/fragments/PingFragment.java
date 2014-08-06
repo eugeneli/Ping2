@@ -1,12 +1,18 @@
 package com.ping.fragments;
 
+import com.google.gson.JsonObject;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Response;
 import com.ping.R;
 import com.ping.models.Ping;
+import com.ping.models.User;
 import com.ping.util.FontTools;
+import com.ping.util.PingApi;
 
 import android.os.Bundle;
 import android.os.Parcel;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +22,8 @@ import android.widget.TextView;
 public class PingFragment extends Fragment
 {	
 	public static final String TAG = NewPingFragment.class.getSimpleName();
+	
+	private PingApi pingApi;
 	
 	private TextView pingTitle;
 	private TextView pingAuthor;
@@ -27,8 +35,7 @@ public class PingFragment extends Fragment
 	
 	public static PingFragment newInstance() 
 	{
-		PingFragment frag = new PingFragment();
-	    return frag;
+		return new PingFragment();
 	}
 	
 	@Override
@@ -51,12 +58,26 @@ public class PingFragment extends Fragment
 		super.onActivityCreated(savedInstanceState);
 		FontTools.applyFont(getActivity(), getActivity().findViewById(R.id.root));
 		
+		pingApi = PingApi.getInstance(getActivity(), null);
+		
 		Bundle bundle = getArguments();
 		Ping ping = bundle.getParcelable(PING_DATA);
 		
 		pingTitle.setText(ping.getTitle());
-		pingAuthor.setText(ping.getAuthorName());
 		pingMessage.setText(ping.getMessage());
-		pingAddress.setText("near " + ping.getAddress());
+		//pingAddress.setText("near " + ping.getAddress());
+		
+		pingApi.getUserById(ping.getCreatorId(), new FutureCallback<Response<JsonObject>>() {
+			@Override
+			public void onCompleted(Exception e, Response<JsonObject> response)
+			{
+				JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+				Log.d(TAG, response.getResult().getAsString().toString());
+				String fname = jsonResponse.get(User.FIRST_NAME).getAsString();
+				String lname = jsonResponse.get(User.LAST_NAME).getAsString();
+				
+				pingAuthor.setText(fname + lname);
+			}
+		});
 	}
 }

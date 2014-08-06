@@ -42,11 +42,6 @@ public class PingApi
 		return instance;
 	}
 	
-	public static PingApi getInstance(Context context)
-	{
-		return getInstance(null);
-	}
-	
 	private PingApi(Context c, String token)
 	{
 		context = c;
@@ -126,6 +121,7 @@ public class PingApi
 	{
 		Ion.with(context)
 		.load("GET", PingApiUrls.userSelfUrl())
+		.setLogging(TAG, Log.VERBOSE)
 		.addHeader(PING_AUTHTOKEN_HEADER, authToken)
 		.asJsonObject()
 		.withResponse()
@@ -170,6 +166,7 @@ public class PingApi
 	{
 		Ion.with(context)
 		.load("DELETE", PingApiUrls.userLogoutUrl())
+		.setLogging(TAG, Log.VERBOSE)
 		.asJsonObject()
 		.withResponse()
 		.setCallback(callback);
@@ -179,6 +176,7 @@ public class PingApi
 	{
 		Ion.with(context)
 		.load("GET", PingApiUrls.getUserByIdUrl(id))
+		.setLogging(TAG, Log.VERBOSE)
 		.addHeader(PING_AUTHTOKEN_HEADER, authToken)
 		.asJsonObject()
 		.withResponse()
@@ -189,6 +187,7 @@ public class PingApi
 	{
 		Ion.with(context)
 		.load("GET", PingApiUrls.getUserPingsUrl(id))
+		.setLogging(TAG, Log.VERBOSE)
 		.addHeader(PING_AUTHTOKEN_HEADER, authToken)
 		.asJsonObject()
 		.withResponse()

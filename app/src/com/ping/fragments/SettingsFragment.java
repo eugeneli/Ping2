@@ -29,16 +29,15 @@ public class SettingsFragment extends Fragment
 	private TextView profile;
 	private TextView logout;
 	
-	public static PingFragment newInstance() 
+	public static SettingsFragment newInstance() 
 	{
-		PingFragment frag = new PingFragment();
-	    return frag;
+	    return new SettingsFragment();
 	}
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-        View view = inflater.inflate(R.layout.fragment_ping, container, false);
+        View view = inflater.inflate(R.layout.fragment_settings, container, false);
         
         profile = (TextView) view.findViewById(R.id.profile);
         logout = (TextView) view.findViewById(R.id.logout);
@@ -51,7 +50,7 @@ public class SettingsFragment extends Fragment
 	{
 		super.onActivityCreated(savedInstanceState);
 		FontTools.applyFont(getActivity(), getActivity().findViewById(R.id.root));
-		pingApi = PingApi.getInstance(getActivity());
+		pingApi = PingApi.getInstance(getActivity(), null);
 		prefs = PingPrefs.getInstance(getActivity());
 		setupListeners();
 	}

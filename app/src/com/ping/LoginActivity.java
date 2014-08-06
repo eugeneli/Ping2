@@ -24,7 +24,6 @@ import com.koushikdutta.ion.Response;
 import com.ping.models.PingMap;
 import com.ping.util.FontTools;
 import com.ping.util.PingApi;
-import com.ping.util.PingApiUrls;
 import com.ping.util.PingPrefs;
 
 import android.support.v4.app.FragmentActivity;
@@ -64,7 +63,6 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	//Facebook Login variables
 	private UiLifecycleHelper uiHelper;
 	private LoginButton loginButton;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -80,6 +78,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 		
 		resources = getResources();
 		progress = new ProgressDialog(this);
+		progress.setIndeterminate(true);
 
 		googleApi = new GoogleApiClient.Builder(this)
         .addConnectionCallbacks(this)
@@ -115,6 +114,8 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
             	Session session = Session.getActiveSession();
             	if(session != null && session.isOpened())
             	{
+            		progress.setMessage(resources.getString(R.string.fbLoadingMessage));
+        			progress.show();
             		String token = session.getAccessToken();
                 	loginWithOAuth(FACEBOOK, token);
             	}
@@ -127,7 +128,6 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	public void loginWithOAuth(String oAuthProvider, final String oAuthAccessToken)
 	{
 		final Context context = this;
-		progress.dismiss();
 		if(oAuthProvider.equals(GOOGLE_PLUS))
 		{
 			Log.d(TAG, oAuthProvider + " - " + oAuthAccessToken);
@@ -146,6 +146,8 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 
 						Intent intent = new Intent(context, MainActivity.class);
 						startActivity(intent);
+						
+						finish();
 					}
 				}
 			});
@@ -153,7 +155,6 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 		}
 		else if(oAuthProvider.equals(FACEBOOK))
 		{
-			Log.d(TAG, PingApiUrls.userLoginUrl());
 			Log.d(TAG, oAuthProvider + " - " + oAuthAccessToken);
 			pingApi.userOAuthLogin(oAuthProvider, oAuthAccessToken, new FutureCallback<Response<JsonObject>>(){
 				@Override
@@ -167,13 +168,13 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 						pingApi.setAuthToken(authToken);
 						
 						Log.d(TAG, authToken);
-						
 						Intent intent = new Intent(context, MainActivity.class);
 						startActivity(intent);
+						
+						finish();
 					}
 				}
 			});
-			finish();
 		}
 	}
 	
@@ -219,6 +220,17 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
     public void onDestroy() {
         super.onDestroy();
         uiHelper.onDestroy();
+        if (progress != null) {
+        	progress.dismiss();
+        	progress = null;
+        }
+    }
+    
+    @Override
+    public void onResume()
+    {
+    	super.onResume();
+    	
     }
 
 	

@@ -34,8 +34,7 @@ public class LoginFragment extends Fragment
 	
 	public static LoginFragment newInstance() 
 	{
-	    LoginFragment myFragment = new LoginFragment();
-	    return myFragment;
+	    return new LoginFragment();
 	}
 	
 	@Override

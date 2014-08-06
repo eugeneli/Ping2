@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class FontTools
 {
 	public static final String TAG = FontTools.class.getSimpleName();
-	private static final String fontName = "roboto_thin.ttf";
+	private static final String fontName = "newcirclegorditta.ttf";//"roboto_thin.ttf";
 	
 	public static void applyFont(final Context context, final View root) {
         try {
