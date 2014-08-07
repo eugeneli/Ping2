@@ -1,5 +1,6 @@
 package com.ping.util;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
@@ -78,6 +79,7 @@ public class PingApi
 	{
 		JsonObject json = new JsonObject();
 		JsonObject node = new JsonObject();
+		JsonArray images = new JsonArray();
 		
 		//node.addProperty(Ping.DURATION, ping.getDuration());
 		node.addProperty(Ping.LATITUDE, ping.getLocation().latitude);
@@ -85,10 +87,24 @@ public class PingApi
 		node.addProperty(Ping.TITLE, ping.getTitle());
 		node.addProperty(Ping.MESSAGE, ping.getMessage());
 		
+		if(ping.getImage() != null)
+		{
+			JsonObject image = new JsonObject();
+			image.addProperty(Ping.FILENAME, "whydoweneedthis.jpg");
+			image.addProperty(Ping.CONTENT_TYPE, "image/jpg");
+			image.addProperty(Ping.IMAGE_DATA, ping.getImage());
+			
+			images.add(image);
+			node.add(Ping.IMAGES, images);
+		}
+		
 		json.add(NODE, node);
+		
+		Log.d(TAG, json.toString());
 		
 		Ion.with(context)
 		.load("POST", PingApiUrls.pingsUrl())
+		.setLogging(TAG, Log.VERBOSE)
 		.addHeader(PING_AUTHTOKEN_HEADER, authToken)
 		.setJsonObjectBody(json)
 		.asJsonObject()
@@ -110,6 +126,7 @@ public class PingApi
 		
 		Ion.with(context)
 		.load("PUT", PingApiUrls.getPingByIdUrl(ping.getId()))
+		.setLogging(TAG, Log.VERBOSE)
 		.addHeader(PING_AUTHTOKEN_HEADER, authToken)
 		.setJsonObjectBody(json)
 		.asJsonObject()

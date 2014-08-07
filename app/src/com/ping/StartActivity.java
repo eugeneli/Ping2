@@ -3,6 +3,7 @@ package com.ping;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
+import com.ping.models.User;
 import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
 
@@ -18,6 +19,8 @@ public class StartActivity extends Activity
 {
 	public static final String TAG = StartActivity.class.getSimpleName();
 	private PingApi pingApi;
+	private PingPrefs prefs;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -26,7 +29,7 @@ public class StartActivity extends Activity
 		
 		final Context context = this;
 		
-		PingPrefs prefs = PingPrefs.getInstance(this);
+		prefs = PingPrefs.getInstance(this);
 		if(prefs.getAuthToken() == null)
 		{
 			Intent intent = new Intent(this, LoginActivity.class);
@@ -39,11 +42,15 @@ public class StartActivity extends Activity
 				@Override
 				public void onCompleted(Exception e, Response<JsonObject> response)
 				{
-					Intent intent = new Intent(context, MainActivity.class);
-					startActivity(intent);
-					/*try {
+					try {
 						if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
 						{
+							JsonObject userJson = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+							User user = new User();
+							user.fromJson(userJson);
+							
+							prefs.setCurrentUser(user);
+							
 							Intent intent = new Intent(context, MainActivity.class);
 							startActivity(intent);
 						}
@@ -58,7 +65,7 @@ public class StartActivity extends Activity
 						Toast.makeText(getApplicationContext(), "Couldn't connect to Ping server", Toast.LENGTH_LONG).show();
 						Intent intent = new Intent(context, LoginActivity.class);
 						startActivity(intent);
-					}*/
+					}
 				}
 			});
 		}

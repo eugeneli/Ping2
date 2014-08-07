@@ -4,7 +4,7 @@ public class PingApiUrls
 {
 	@SuppressWarnings("unused")
 	private final static String TAG = PingApiUrls.class.getSimpleName();
-	private final static String SERVER_URL = "http://192.168.2.215:3000/1";
+	private final static String SERVER_URL = "http://192.168.2.215:3000/1";//"http://192.168.2.161:3000/1";//"http://192.168.2.215:3000/1";
 
 	private final static String USER_PATH = "/users";
 	private final static String USER_ME = "/me";

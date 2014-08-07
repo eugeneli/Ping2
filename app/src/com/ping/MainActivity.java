@@ -3,27 +3,34 @@ package com.ping;
 import java.util.Iterator;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
+import com.ping.fragments.PingFragment;
 import com.ping.interfaces.PingInterface;
 import com.ping.models.Ping;
 import com.ping.models.PingMap;
+import com.ping.models.User;
 import com.ping.util.FontTools;
 import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.Window;
+import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements PingInterface
 {	
@@ -36,6 +43,8 @@ public class MainActivity extends FragmentActivity implements PingInterface
 	
 	public static final String BUNDLE_ACTION = "bundle_action";
 	public static final String BUNDLE_DATA = "bundle_data";
+	
+	public Context context = this;
 	
 	public static class Actions
 	{
@@ -84,7 +93,70 @@ public class MainActivity extends FragmentActivity implements PingInterface
 				}
 			});
 			
-			PingService.scheduleService(this);
+			map.setOnInfoWindowClickedListener(new OnInfoWindowClickListener() {
+				@Override
+				public void onInfoWindowClick(Marker marker)
+				{
+					final Ping selectedPing = map.getSelectedPing(marker);
+					if(selectedPing != null)
+					{
+						pingApi.getPingById(selectedPing.getId(), new FutureCallback<Response<JsonObject>>() {
+
+							@Override
+							public void onCompleted(Exception e, Response<JsonObject> response)
+							{
+								JsonObject pingJson = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+								JsonArray images = pingJson.get(Ping.IMAGES).getAsJsonArray();
+								if(images.size() > 0)
+								{
+									JsonObject image = images.get(0).getAsJsonObject();
+									
+									selectedPing.setImageUrlThumb(image.get(Ping.IMAGE_URL_THUMB).getAsString());
+									selectedPing.setImageUrlSmall(image.get(Ping.IMAGE_URL_SMALL).getAsString());
+									selectedPing.setImageUrlLarge(image.get(Ping.IMAGE_URL_LARGE).getAsString());
+								}
+								
+								FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+								ft.setCustomAnimations(R.anim.zoom_enter, R.anim.zoom_exit,R.anim.zoom_enter, R.anim.zoom_exit);
+
+								PingFragment pingFrag = PingFragment.newInstance();
+								Bundle bundle = new Bundle();
+								bundle.putParcelable(PingFragment.PING_DATA, selectedPing);
+								pingFrag.setArguments(bundle);
+
+								ft.replace(R.id.fragmentContainer, pingFrag, "pingFragment");
+								ft.addToBackStack(PingFragment.TAG).commit();
+							}
+							
+						});
+					}
+				}
+			});
+			
+			pingApi.getUser(new FutureCallback<Response<JsonObject>>() {
+				@Override
+				public void onCompleted(Exception e, Response<JsonObject> response)
+				{
+					try {
+						if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
+						{
+							JsonObject userJson = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+							User user = new User();
+							user.fromJson(userJson);
+							
+							prefs.setCurrentUser(user);
+						}
+					}
+					catch(NullPointerException npe)
+					{
+						Toast.makeText(getApplicationContext(), "Couldn't connect to Ping server", Toast.LENGTH_LONG).show();
+						Intent intent = new Intent(context, LoginActivity.class);
+						startActivity(intent);
+					}
+				}
+			});
+			
+			//PingService.scheduleService(this);
 		}
 		else
 		{
@@ -104,21 +176,37 @@ public class MainActivity extends FragmentActivity implements PingInterface
 
 				while(iterator.hasNext())
 				{
-				    JsonElement pingJson = (JsonElement) iterator.next();
-				    Gson gson = new Gson();
+				    JsonObject pingJson = (JsonObject) iterator.next();
+				    JsonObject userJson = pingJson.get(User.USER).getAsJsonObject();
+				    
+				    Ping ping = new Ping();
+				    User user = new User();
+				    
+				    ping.fromJson(pingJson, false);
+				    user.fromJson(userJson);
+				    
+				    map.addPingMarker(ping, user.getFullName());
+				    
+				    /*Gson gson = new Gson();
 				    Ping ping = gson.fromJson(pingJson, Ping.class);
 				    
 				    System.out.println("ASD: "+ ping.getId());
 				    System.out.println(ping.getCreatorId());
 
-				    map.addPingMarker(ping);
+				    map.addPingMarker(ping);*/
 				}
 			}
 			catch(NullPointerException npe)
 			{
-				
+				Log.e(TAG, "Ping array response null");
 			}
 		}
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent intent)
+	{
+	    super.onActivityResult(requestCode, resultCode, intent);
 	}
 
 	@Override
@@ -129,7 +217,7 @@ public class MainActivity extends FragmentActivity implements PingInterface
 			case Actions.NEW_PING:
 				Ping ping = bundle.getParcelable(BUNDLE_DATA);
 				map.moveCamera(ping.getLocation(), 13);
-				map.addPingMarker(ping);
+				map.addPingMarker(ping, prefs.getCurrentUser().getFullName());
 				break;
 		}
 	}

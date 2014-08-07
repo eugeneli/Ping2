@@ -1,12 +1,15 @@
 package com.ping.util;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.ping.models.User;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
 public class PingPrefs
 {
+	private User currentUser;
+	
 	private SharedPreferences prefs;
 	private static final String APP_NAME = "com.ping";
 	private static final String PING_AUTH_TOKEN_KEY = APP_NAME + ".authToken";
@@ -63,4 +66,7 @@ public class PingPrefs
 	{
 		prefs.edit().putInt(USER_ZOOM, rad).commit();
 	}
+	
+	public void setCurrentUser(User user) { currentUser = user; }
+	public User getCurrentUser() { return currentUser; }
 }

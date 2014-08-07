@@ -42,10 +42,10 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/pingImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <WebView
+        android:id="@+id/pingImageWebView"
+        android:layout_width="100dp"
+        android:layout_height="130dp"
         android:layout_alignLeft="@+id/relativeLayout1"
         android:layout_alignRight="@+id/relativeLayout1"
         android:layout_below="@+id/relativeLayout1"
@@ -56,8 +56,8 @@
         android:id="@+id/pingMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/pingImage"
-        android:layout_below="@+id/pingImage"
+        android:layout_alignLeft="@+id/pingImageWebView"
+        android:layout_below="@+id/pingImageWebView"
         android:text="Ping Message \n\n yes this is a message"
         android:layout_marginTop="10dp"
         android:textAppearance="?android:attr/textAppearanceMedium" />

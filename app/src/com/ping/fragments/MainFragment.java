@@ -2,6 +2,7 @@ package com.ping.fragments;
 
 import com.ping.R;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -73,6 +74,12 @@ public class MainFragment extends Fragment
 				ft.addToBackStack(NewPingFragment.TAG).commit();
 			}
 		});
+	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent intent)
+	{
+	    super.onActivityResult(requestCode, resultCode, intent);
 	}
 
 }

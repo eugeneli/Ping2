@@ -7,6 +7,7 @@ import com.ping.R;
 import com.ping.models.Ping;
 import com.ping.models.User;
 import com.ping.util.FontTools;
+import com.ping.util.HtmlBuilder;
 import com.ping.util.PingApi;
 
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,9 +29,9 @@ public class PingFragment extends Fragment
 	
 	private TextView pingTitle;
 	private TextView pingAuthor;
-	private ImageView pingImage;
 	private TextView pingMessage;
 	private TextView pingAddress;
+	private WebView pingImageWebView;
 	
 	public static final String PING_DATA = "ping_data";
 	
@@ -45,9 +47,9 @@ public class PingFragment extends Fragment
         
         pingTitle = (TextView) view.findViewById(R.id.pingTitle);
         pingAuthor = (TextView) view.findViewById(R.id.pingAuthor);
-        pingImage = (ImageView) view.findViewById(R.id.pingImage);
         pingMessage = (TextView) view.findViewById(R.id.pingMessage);
         pingAddress = (TextView) view.findViewById(R.id.pingAddress);
+        pingImageWebView = (WebView) view.findViewById(R.id.pingImageWebView);
         
         return view;
     }
@@ -72,12 +74,17 @@ public class PingFragment extends Fragment
 			public void onCompleted(Exception e, Response<JsonObject> response)
 			{
 				JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
-				Log.d(TAG, response.getResult().getAsString().toString());
 				String fname = jsonResponse.get(User.FIRST_NAME).getAsString();
 				String lname = jsonResponse.get(User.LAST_NAME).getAsString();
 				
-				pingAuthor.setText(fname + lname);
+				pingAuthor.setText(fname + " " + lname);
 			}
 		});
+
+		if(ping.getImageUrlSmall() != null)
+			pingImageWebView.loadData(HtmlBuilder.buildImageHtml(ping.getImageUrlSmall()), "text/html; charset=UTF-8", null);
+		else
+			pingImageWebView.setVisibility(View.GONE);
+		
 	}
 }

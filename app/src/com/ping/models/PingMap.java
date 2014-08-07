@@ -41,27 +41,6 @@ public class PingMap
 		map.setMyLocationEnabled(true);
 		
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(prefs.getLocation(), prefs.getZoom()));
-
-		map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
-			@Override
-			public void onInfoWindowClick(Marker marker)
-			{
-				Ping selectedPing = markerToPing.get(marker);
-				if(selectedPing != null)
-				{
-					FragmentTransaction ft = parentActivity.getSupportFragmentManager().beginTransaction();
-					ft.setCustomAnimations(R.anim.zoom_enter, R.anim.zoom_exit,R.anim.zoom_enter, R.anim.zoom_exit);
-
-					PingFragment pingFrag = PingFragment.newInstance();
-					Bundle bundle = new Bundle();
-					bundle.putParcelable(PingFragment.PING_DATA, selectedPing);
-					pingFrag.setArguments(bundle);
-
-					ft.replace(R.id.fragmentContainer, pingFrag, "pingFragment");
-					ft.addToBackStack(PingFragment.TAG).commit();
-				}
-			}
-		});
 		
 		map.setOnMapLongClickListener(new OnMapLongClickListener() {
 			@Override
@@ -82,6 +61,11 @@ public class PingMap
 		});
 	}
 	
+	public void setOnInfoWindowClickedListener(OnInfoWindowClickListener ocl)
+	{
+		map.setOnInfoWindowClickListener(ocl);
+	}
+	
 	public void setOnCameraChangeListener(OnCameraChangeListener ocl)
 	{
 		map.setOnCameraChangeListener(ocl);
@@ -92,15 +76,20 @@ public class PingMap
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, zoom));
 	}
 	
-	public void addPingMarker(Ping ping)
+	public void addPingMarker(Ping ping, String creatorName)
 	{
 		Marker marker = map.addMarker(new MarkerOptions()
 		.title(ping.getTitle())
-		.snippet(ping.getMessage())
+		.snippet("posted by: "+ creatorName)
 		.position(ping.getLocation())
 		.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
 		
 		markerToPing.put(marker, ping);
+	}
+	
+	public Ping getSelectedPing(Marker marker)
+	{
+		return markerToPing.get(marker);
 	}
 	
 	public void demoMapOrigin()
