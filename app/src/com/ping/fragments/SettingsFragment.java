@@ -74,7 +74,7 @@ public class SettingsFragment extends Fragment
 					public void onCompleted(Exception e, Response<JsonObject> response)
 					{
 						prefs.setAuthToken(null);
-						Toast.makeText(getActivity(), "You have been logged out", Toast.LENGTH_LONG).show();
+						Toast.makeText(getActivity(), getResources().getString(R.string.loggedOut), Toast.LENGTH_LONG).show();
 						Intent intent = new Intent(getActivity(), LoginActivity.class);
 						startActivity(intent);
 					}

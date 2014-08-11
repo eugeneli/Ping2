@@ -91,7 +91,7 @@ public class NewPingFragment extends Fragment
 		super.onActivityCreated(savedInstanceState);
 		FontTools.applyFont(getActivity(), getActivity().findViewById(R.id.root));
 		prefs = PingPrefs.getInstance(getActivity());
-		pingApi = PingApi.getInstance(getActivity(), prefs.getAuthToken());
+		pingApi = PingApi.getInstance();
 		
 		final Bundle bundle = getArguments();
 		final boolean includedLatLng = bundle.getBoolean(LATLNG_INCLUDED);
@@ -161,7 +161,6 @@ public class NewPingFragment extends Fragment
 					ping.setImageUrlLarge(imageData.get(Ping.IMAGE_URL_LARGE).getAsString());
 				}
 				
-				
 				Bundle b = new Bundle();
 				b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
 				b.putParcelable(MainActivity.BUNDLE_DATA, ping);
@@ -199,13 +198,13 @@ public class NewPingFragment extends Fragment
 			Bitmap bmp = BitmapFactory.decodeFile(tempFile.getPath(), options);
 			if (bmp != null)
 			{
-				Toast.makeText(getActivity(), "Photo added", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.pictureAdded), Toast.LENGTH_SHORT).show();
 				ping.setImage(new EncodedBitmap(bmp));
 				addedImage.setImageBitmap(bmp);
 				addedImage.setVisibility(View.VISIBLE);
 			}
 			else
-				Toast.makeText(getActivity(), "Could not add photo", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.pictureNotAdded), Toast.LENGTH_SHORT).show();
 			tempFile.delete();			
 		}
 	}

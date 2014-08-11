@@ -38,6 +38,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class LoginActivity extends FragmentActivity implements ConnectionCallbacks, OnConnectionFailedListener
 {
@@ -48,6 +50,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	private PingPrefs prefs;
 	private Resources resources;
 	private ProgressDialog progress;
+	private LinearLayout oAuthContainer;
 	
 	public static final String GOOGLE_PLUS = "google";
 	public static final String FACEBOOK = "facebook";
@@ -63,6 +66,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	//Facebook Login variables
 	private UiLifecycleHelper uiHelper;
 	private LoginButton loginButton;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -71,7 +75,9 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 		setContentView(R.layout.activity_login);
 		FontTools.applyFont(this, findViewById(R.id.root));
 		
-		pingApi = PingApi.getInstance(getBaseContext(), null);
+		oAuthContainer = (LinearLayout) findViewById(R.id.oauthContainer);
+		
+		pingApi = PingApi.getInstance();
 		prefs = PingPrefs.getInstance(this);
 		map = new PingMap(this, R.id.map);
 		map.demoMapOrigin();
@@ -123,11 +129,10 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
         });
 	}
 	
-	public PingMap getMap() { return map; }
-	
 	public void loginWithOAuth(String oAuthProvider, final String oAuthAccessToken)
 	{
 		final Context context = this;
+		oAuthContainer.setVisibility(View.GONE);
 		if(oAuthProvider.equals(GOOGLE_PLUS))
 		{
 			Log.d(TAG, oAuthProvider + " - " + oAuthAccessToken);
@@ -151,7 +156,6 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 					}
 				}
 			});
-			finish();
 		}
 		else if(oAuthProvider.equals(FACEBOOK))
 		{
@@ -160,18 +164,24 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 				@Override
 				public void onCompleted(Exception e, Response<JsonObject> response)
 				{
-					if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
+					try {
+						if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
+						{
+							JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+							String authToken = jsonResponse.get(PingApi.JSON_AUTHTOKEN).getAsString();
+							prefs.setAuthToken(authToken);
+							pingApi.setAuthToken(authToken);
+							
+							Log.d(TAG, authToken);
+							Intent intent = new Intent(context, MainActivity.class);
+							startActivity(intent);
+							
+							finish();
+						}
+					}
+					catch(Exception ex)
 					{
-						JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
-						String authToken = jsonResponse.get(PingApi.JSON_AUTHTOKEN).getAsString();
-						prefs.setAuthToken(authToken);
-						pingApi.setAuthToken(authToken);
-						
-						Log.d(TAG, authToken);
-						Intent intent = new Intent(context, MainActivity.class);
-						startActivity(intent);
-						
-						finish();
+						Toast.makeText(getBaseContext(), "Couldn't connect to Ping servers", Toast.LENGTH_SHORT).show();
 					}
 				}
 			});
@@ -220,7 +230,8 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
     public void onDestroy() {
         super.onDestroy();
         uiHelper.onDestroy();
-        if (progress != null) {
+        if (progress != null)
+        {
         	progress.dismiss();
         	progress = null;
         }

@@ -1,6 +1,5 @@
 package com.ping.models;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 public class User

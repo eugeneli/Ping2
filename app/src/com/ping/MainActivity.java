@@ -7,7 +7,6 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -24,6 +23,7 @@ import com.ping.util.PingPrefs;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -40,6 +40,7 @@ public class MainActivity extends FragmentActivity implements PingInterface
 	private PingApi pingApi;
 	private PingPrefs prefs;
 	private String authToken;
+	private Resources resources;
 	
 	public static final String BUNDLE_ACTION = "bundle_action";
 	public static final String BUNDLE_DATA = "bundle_data";
@@ -59,11 +60,13 @@ public class MainActivity extends FragmentActivity implements PingInterface
 		setContentView(R.layout.activity_main);
 		FontTools.applyFont(this, findViewById(R.id.root));
 		
+		resources = getResources();
+		
 		prefs = PingPrefs.getInstance(this);
 		authToken = prefs.getAuthToken();
 		if(authToken != null)
 		{
-			pingApi = PingApi.getInstance(getBaseContext(), authToken);
+			pingApi = PingApi.getInstance();
 			map = new PingMap(this, R.id.map);
 			
 			LatLng loc = prefs.getLocation();
@@ -101,7 +104,6 @@ public class MainActivity extends FragmentActivity implements PingInterface
 					if(selectedPing != null)
 					{
 						pingApi.getPingById(selectedPing.getId(), new FutureCallback<Response<JsonObject>>() {
-
 							@Override
 							public void onCompleted(Exception e, Response<JsonObject> response)
 							{
@@ -117,7 +119,7 @@ public class MainActivity extends FragmentActivity implements PingInterface
 								}
 								
 								FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-								ft.setCustomAnimations(R.anim.zoom_enter, R.anim.zoom_exit,R.anim.zoom_enter, R.anim.zoom_exit);
+								ft.setCustomAnimations(R.anim.zoom_enter, R.anim.zoom_exit, R.anim.zoom_enter, R.anim.zoom_exit);
 
 								PingFragment pingFrag = PingFragment.newInstance();
 								Bundle bundle = new Bundle();
@@ -147,9 +149,9 @@ public class MainActivity extends FragmentActivity implements PingInterface
 							prefs.setCurrentUser(user);
 						}
 					}
-					catch(NullPointerException npe)
+					catch(Exception ex)
 					{
-						Toast.makeText(getApplicationContext(), "Couldn't connect to Ping server", Toast.LENGTH_LONG).show();
+						Toast.makeText(getApplicationContext(), resources.getString(R.string.connectionFailed), Toast.LENGTH_LONG).show();
 						Intent intent = new Intent(context, LoginActivity.class);
 						startActivity(intent);
 					}

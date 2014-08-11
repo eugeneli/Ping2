@@ -36,10 +36,15 @@ public class PingApi
 	
 	private static PingApi instance = null;
 
-	public static PingApi getInstance(Context context, String authToken)
+	public static PingApi getInstance(Context context, String token)
 	{ 
 		if(instance == null)
-			instance = new PingApi(context, authToken);
+			instance = new PingApi(context, token);
+		return instance;
+	}
+	
+	public static PingApi getInstance()
+	{
 		return instance;
 	}
 	
@@ -47,6 +52,11 @@ public class PingApi
 	{
 		context = c;
 		authToken = token;
+	}
+	
+	private PingApi(Context c)
+	{
+		context = c;
 	}
 	
 	public void setAuthToken(String token)
@@ -91,7 +101,7 @@ public class PingApi
 		{
 			JsonObject image = new JsonObject();
 			image.addProperty(Ping.FILENAME, "whydoweneedthis.jpg");
-			image.addProperty(Ping.CONTENT_TYPE, "image/jpg");
+			image.addProperty(Ping.CONTENT_TYPE, "image/jpeg");
 			image.addProperty(Ping.IMAGE_DATA, ping.getImage());
 			
 			images.add(image);

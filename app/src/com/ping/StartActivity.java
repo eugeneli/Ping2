@@ -3,7 +3,6 @@ package com.ping;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
-import com.ping.models.User;
 import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
 
@@ -11,7 +10,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
@@ -29,6 +27,7 @@ public class StartActivity extends Activity
 		
 		final Context context = this;
 		
+		pingApi = PingApi.getInstance(getApplicationContext(), null);
 		prefs = PingPrefs.getInstance(this);
 		if(prefs.getAuthToken() == null)
 		{
@@ -37,20 +36,14 @@ public class StartActivity extends Activity
 		}
 		else
 		{
-			pingApi = PingApi.getInstance(getBaseContext(), prefs.getAuthToken());
+			pingApi.setAuthToken(prefs.getAuthToken());
 			pingApi.getUser(new FutureCallback<Response<JsonObject>>() {
 				@Override
 				public void onCompleted(Exception e, Response<JsonObject> response)
 				{
 					try {
 						if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
-						{
-							JsonObject userJson = response.getResult().getAsJsonObject(PingApi.RESPONSE);
-							User user = new User();
-							user.fromJson(userJson);
-							
-							prefs.setCurrentUser(user);
-							
+						{							
 							Intent intent = new Intent(context, MainActivity.class);
 							startActivity(intent);
 						}
@@ -62,7 +55,7 @@ public class StartActivity extends Activity
 					}
 					catch(NullPointerException npe)
 					{
-						Toast.makeText(getApplicationContext(), "Couldn't connect to Ping server", Toast.LENGTH_LONG).show();
+						//Toast.makeText(getApplicationContext(), "Couldn't connect to Ping", Toast.LENGTH_LONG).show();
 						Intent intent = new Intent(context, LoginActivity.class);
 						startActivity(intent);
 					}
