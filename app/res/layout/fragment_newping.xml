@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/title"
         android:layout_below="@+id/title"
+        android:layout_centerHorizontal="true"
         android:ems="10"
         android:layout_marginTop="20dp"
         android:hint="@string/addressHint" />
@@ -63,16 +64,6 @@
         android:layout_marginTop="10dp"
         android:background="@android:color/darker_gray" />
 
-    <ImageButton
-        android:id="@+id/addImageButton"
-        style="@style/BlueBackgroundImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/addedImage"
-        android:layout_below="@+id/addedImage"
-        android:layout_marginTop="15dp"
-        android:src="@drawable/image" />
-
     <ImageView
         android:id="@+id/addedImage"
         android:layout_width="wrap_content"
@@ -81,6 +72,7 @@
         android:layout_below="@+id/address"
         android:layout_marginTop="16dp"
         android:src="@drawable/ic_launcher"
+        android:layout_centerHorizontal="true"
         android:visibility="gone" />
 
     <EditText
@@ -93,6 +85,18 @@
         android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="@string/messageHint"
+        android:layout_centerHorizontal="true"
         android:inputType="textMultiLine" />
+
+    <ImageButton
+        android:id="@+id/addImageButton"
+        style="@style/BlueBackgroundImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/address"
+        android:layout_below="@+id/address"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/image" />
    
 </RelativeLayout>

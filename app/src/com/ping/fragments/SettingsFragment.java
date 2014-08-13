@@ -9,6 +9,7 @@ import com.ping.util.FontTools;
 import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -25,6 +26,7 @@ public class SettingsFragment extends Fragment
 	
 	private PingApi pingApi;
 	private PingPrefs prefs;
+	private Context context;
 	
 	private TextView profile;
 	private TextView logout;
@@ -38,7 +40,8 @@ public class SettingsFragment extends Fragment
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		prefs = PingPrefs.getInstance(getActivity());
+		context = getActivity();
+		prefs = PingPrefs.getInstance(context);
 		pingApi = PingApi.getInstance();
 	}
 	
@@ -46,7 +49,7 @@ public class SettingsFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View view = inflater.inflate(R.layout.fragment_settings, container, false);
-		FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
+		FontTools.applyFont(context, view.findViewById(R.id.root));
 		
 		profile = (TextView) view.findViewById(R.id.profile);
 		logout = (TextView) view.findViewById(R.id.logout);
@@ -74,10 +77,13 @@ public class SettingsFragment extends Fragment
 					@Override
 					public void onCompleted(Exception e, Response<JsonObject> response)
 					{
-						prefs.setAuthToken(null);
-						Toast.makeText(getActivity(), getResources().getString(R.string.loggedOut), Toast.LENGTH_LONG).show();
-						Intent intent = new Intent(getActivity(), LoginActivity.class);
-						startActivity(intent);
+						if(PingApi.validResponse(response, context, getResources()))
+						{
+							prefs.setAuthToken(null);
+							Toast.makeText(context, getResources().getString(R.string.loggedOut), Toast.LENGTH_LONG).show();
+							Intent intent = new Intent(context, LoginActivity.class);
+							startActivity(intent);
+						}
 					}
 				});
 			}

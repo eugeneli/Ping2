@@ -2,6 +2,7 @@ package com.ping;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -10,6 +11,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
+import com.ping.fragments.NewPingFragment;
 import com.ping.fragments.PingFragment;
 import com.ping.interfaces.PingInterface;
 import com.ping.models.Ping;
@@ -130,6 +132,25 @@ public class MainActivity extends FragmentActivity implements PingInterface
 				}
 			});
 			
+			map.setOnMapLongClickListener(new OnMapLongClickListener() {
+				@Override
+				public void onMapLongClick(LatLng point)
+				{
+					NewPingFragment.newInstance(true, point).show(getSupportFragmentManager(), TAG);
+					/*FragmentTransaction ft = parentActivity.getSupportFragmentManager().beginTransaction();
+					ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down,R.anim.slide_in_up, R.anim.slide_out_down);
+
+					NewPingFragment newPingFrag = NewPingFragment.newInstance();
+					Bundle bundle = new Bundle();
+					bundle.putBoolean(NewPingFragment.LATLNG_INCLUDED, true);
+					bundle.putParcelable(NewPingFragment.BUNDLE_LATLNG, point);
+					newPingFrag.setArguments(bundle);
+
+					ft.replace(R.id.fragmentContainer, newPingFrag, null);
+					ft.addToBackStack(PingFragment.TAG).commit();*/
+				}
+			});
+			
 			pingApi.getUser(new FutureCallback<Response<JsonObject>>() {
 				@Override
 				public void onCompleted(Exception e, Response<JsonObject> response)
@@ -164,7 +185,7 @@ public class MainActivity extends FragmentActivity implements PingInterface
 	
 	private void addPingsToMap(Response<JsonObject> response)
 	{
-		if(response != null)
+		if(PingApi.validResponse(response, context, getResources()))
 		{
 			try {
 				JsonArray pingsJson = response.getResult().getAsJsonArray(PingApi.RESPONSE);

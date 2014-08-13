@@ -20,6 +20,7 @@ import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,19 +31,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class NewPingFragment extends Fragment
+public class NewPingFragment extends DialogFragment
 {	
 	public static final String TAG = NewPingFragment.class.getSimpleName();
 	
@@ -50,6 +54,7 @@ public class NewPingFragment extends Fragment
 	private PingInterface dataPasser;
 	private PingApi pingApi;
 	private PingPrefs prefs;
+	private FragmentActivity context;
 	private Bundle bundle;
 	
 	private EditText title;
@@ -67,16 +72,38 @@ public class NewPingFragment extends Fragment
 	
 	private Ping ping = new Ping();
 	
-	public static NewPingFragment newInstance()
+	public static NewPingFragment newInstance(boolean locIncluded, LatLng loc)
 	{
-		return new NewPingFragment();
+		NewPingFragment npf = new NewPingFragment();
+		Bundle bundle = new Bundle();
+		
+		if(locIncluded)
+		{
+			bundle.putBoolean(NewPingFragment.LATLNG_INCLUDED, true);
+			bundle.putParcelable(NewPingFragment.BUNDLE_LATLNG, loc);
+		}
+		else
+			bundle.putBoolean(NewPingFragment.LATLNG_INCLUDED, false);
+		
+		npf.setArguments(bundle);
+		return npf;
+	}
+	
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState) 
+	{
+	    final Dialog dialog = super.onCreateDialog(savedInstanceState);
+	    dialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+	    dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+	    return dialog;
 	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		prefs = PingPrefs.getInstance(getActivity());
+		context = getActivity();
+		prefs = PingPrefs.getInstance(context);
 		pingApi = PingApi.getInstance();
 		bundle = getArguments();
 	}
@@ -85,7 +112,7 @@ public class NewPingFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View view = inflater.inflate(R.layout.fragment_newping, container, false);
-		FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
+		FontTools.applyFont(context, view.findViewById(R.id.root));
 		
 		title = (EditText) view.findViewById(R.id.title);
 		//duration = (EditText) view.findViewById(R.id.duration);
@@ -120,7 +147,7 @@ public class NewPingFragment extends Fragment
 				
 				if(!includedLatLng)
 				{
-					Geocoder gc = new Geocoder(fragment.getActivity().getBaseContext());
+					Geocoder gc = new Geocoder(context);
 					try {
 						List<Address> list = gc.getFromLocationName(address.getText().toString(), 1);
 						LatLng loc = new LatLng(list.get(0).getLatitude(), list.get(0).getLongitude());
@@ -152,24 +179,29 @@ public class NewPingFragment extends Fragment
 			@Override
 			public void onCompleted(Exception e, Response<JsonObject> response)
 			{
-				JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
-				ping.setId(jsonResponse.get(Ping.ID).getAsInt());
-				
-				JsonArray imageArray = jsonResponse.get(Ping.IMAGES).getAsJsonArray();
-				if(imageArray.size() > 0)
+				if(PingApi.validResponse(response, context, getResources()))
 				{
-					JsonObject imageData = imageArray.get(0).getAsJsonObject();
+					JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+					ping.setId(jsonResponse.get(Ping.ID).getAsInt());
 					
-					ping.setImageUrlThumb(imageData.get(Ping.IMAGE_URL_THUMB).getAsString());
-					ping.setImageUrlSmall(imageData.get(Ping.IMAGE_URL_SMALL).getAsString());
-					ping.setImageUrlLarge(imageData.get(Ping.IMAGE_URL_LARGE).getAsString());
+					JsonArray imageArray = jsonResponse.get(Ping.IMAGES).getAsJsonArray();
+					if(imageArray.size() > 0)
+					{
+						JsonObject imageData = imageArray.get(0).getAsJsonObject();
+						
+						ping.setImageUrlThumb(imageData.get(Ping.IMAGE_URL_THUMB).getAsString());
+						ping.setImageUrlSmall(imageData.get(Ping.IMAGE_URL_SMALL).getAsString());
+						ping.setImageUrlLarge(imageData.get(Ping.IMAGE_URL_LARGE).getAsString());
+					}
+					
+					Bundle b = new Bundle();
+					b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
+					b.putParcelable(MainActivity.BUNDLE_DATA, ping);
+					passData(b);
+					NewPingFragment.this.dismiss();
+					
+					//context.getSupportFragmentManager().beginTransaction().remove(fragment).commit();
 				}
-				
-				Bundle b = new Bundle();
-				b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
-				b.putParcelable(MainActivity.BUNDLE_DATA, ping);
-				passData(b);
-				getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
 			}
 		});
 	}
@@ -216,17 +248,16 @@ public class NewPingFragment extends Fragment
 				{
 					if (bmp != null)
 					{
-						Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.pictureAdded), Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, context.getResources().getString(R.string.pictureAdded), Toast.LENGTH_SHORT).show();
 						ping.setImage(new EncodedBitmap(bmp));
 						addedImage.setImageBitmap(bmp);
 						addedImage.setVisibility(View.VISIBLE);
 					}
 					else
-						Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.pictureNotAdded), Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, context.getResources().getString(R.string.pictureNotAdded), Toast.LENGTH_SHORT).show();
 			    }
 			};
 			loadBitmapTask.execute();
-			
 		}
 	}
 }

@@ -10,6 +10,7 @@ import com.ping.util.FontTools;
 import com.ping.util.HtmlBuilder;
 import com.ping.util.PingApi;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -25,6 +26,7 @@ public class PingFragment extends Fragment
 	
 	private PingApi pingApi;
 	private Bundle bundle;
+	private Context context;
 	
 	private TextView pingTitle;
 	private TextView pingAuthor;
@@ -47,6 +49,7 @@ public class PingFragment extends Fragment
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		context = getActivity();
 		pingApi = PingApi.getInstance();
 		bundle = getArguments();
 	}
@@ -55,7 +58,7 @@ public class PingFragment extends Fragment
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View view = inflater.inflate(R.layout.fragment_ping, container, false);
-		FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
+		FontTools.applyFont(context, view.findViewById(R.id.root));
 		
 		pingTitle = (TextView) view.findViewById(R.id.pingTitle);
 		pingAuthor = (TextView) view.findViewById(R.id.pingAuthor);
@@ -73,11 +76,14 @@ public class PingFragment extends Fragment
 			@Override
 			public void onCompleted(Exception e, Response<JsonObject> response)
 			{
-				JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
-				String fname = jsonResponse.get(User.FIRST_NAME).getAsString();
-				String lname = jsonResponse.get(User.LAST_NAME).getAsString();
-				
-				pingAuthor.setText(fname + " " + lname);
+				if(PingApi.validResponse(response, context, getResources()))
+				{
+					JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+					String fname = jsonResponse.get(User.FIRST_NAME).getAsString();
+					String lname = jsonResponse.get(User.LAST_NAME).getAsString();
+					
+					pingAuthor.setText(fname + " " + lname);
+				}
 			}
 		});
 		

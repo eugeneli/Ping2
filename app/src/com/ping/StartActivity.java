@@ -41,21 +41,13 @@ public class StartActivity extends Activity
 				@Override
 				public void onCompleted(Exception e, Response<JsonObject> response)
 				{
-					try {
-						if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
-						{							
-							Intent intent = new Intent(context, MainActivity.class);
-							startActivity(intent);
-						}
-						else
-						{
-							Intent intent = new Intent(context, LoginActivity.class);
-							startActivity(intent);
-						}
-					}
-					catch(NullPointerException npe)
+					if(PingApi.validResponse(response, context, getResources()))
 					{
-						//Toast.makeText(getApplicationContext(), "Couldn't connect to Ping", Toast.LENGTH_LONG).show();
+						Intent intent = new Intent(context, MainActivity.class);
+						startActivity(intent);
+					}
+					else
+					{
 						Intent intent = new Intent(context, LoginActivity.class);
 						startActivity(intent);
 					}
