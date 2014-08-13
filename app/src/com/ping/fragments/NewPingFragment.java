@@ -73,16 +73,16 @@ public class NewPingFragment extends Fragment
 	}
 	
 	@Override
-    public void onCreate(Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
-        super.onCreate(savedInstanceState);
-        prefs = PingPrefs.getInstance(getActivity());
+		super.onCreate(savedInstanceState);
+		prefs = PingPrefs.getInstance(getActivity());
 		pingApi = PingApi.getInstance();
 		bundle = getArguments();
-    }
+	}
 	
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View view = inflater.inflate(R.layout.fragment_newping, container, false);
 		FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
@@ -181,14 +181,14 @@ public class NewPingFragment extends Fragment
 	
 	public void passData(Bundle data)
 	{
-	    dataPasser.onFragmentResult(data);
+		dataPasser.onFragmentResult(data);
 	}
 	
 	@Override
 	public void onAttach(Activity a)
 	{
-	    super.onAttach(a);
-	    dataPasser = (PingInterface) a;
+		super.onAttach(a);
+		dataPasser = (PingInterface) a;
 	}
 	
 	@Override
@@ -199,22 +199,22 @@ public class NewPingFragment extends Fragment
 			AsyncTask<Void, Void, Bitmap> loadBitmapTask = new AsyncTask<Void, Void, Bitmap>() {
 				private Bitmap bmp;
 				
-			    @Override
-			    protected Bitmap doInBackground(Void... params)
-			    {
-			    	File tempFile = getTempFile();
+				@Override
+				protected Bitmap doInBackground(Void... params)
+				{
+					File tempFile = getTempFile();
 					BitmapFactory.Options options = new BitmapFactory.Options();
 					options.inSampleSize = 4;
 					bmp = BitmapFactory.decodeFile(tempFile.getPath(), options);
 					tempFile.delete();
 					
 					return bmp;
-			    }
-
-			    @Override
+				}
+				
+				@Override
 			    protected void onPostExecute(Bitmap bitmap)
-			    {
-			    	if (bmp != null)
+				{
+					if (bmp != null)
 					{
 						Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.pictureAdded), Toast.LENGTH_SHORT).show();
 						ping.setImage(new EncodedBitmap(bmp));

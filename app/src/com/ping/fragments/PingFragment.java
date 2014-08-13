@@ -38,31 +38,31 @@ public class PingFragment extends Fragment
 	{
 		PingFragment pf = new PingFragment();
 		Bundle b = new Bundle();
-	    b.putParcelable(PingFragment.PING_DATA, selectedPing);
-	    pf.setArguments(b);
-	    return pf;
+		b.putParcelable(PingFragment.PING_DATA, selectedPing);
+		pf.setArguments(b);
+		return pf;
 	}
 	
 	@Override
-    public void onCreate(Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
-        super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);
 		pingApi = PingApi.getInstance();
 		bundle = getArguments();
-    }
+	}
 	
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-        View view = inflater.inflate(R.layout.fragment_ping, container, false);
-        FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
-        
-        pingTitle = (TextView) view.findViewById(R.id.pingTitle);
-        pingAuthor = (TextView) view.findViewById(R.id.pingAuthor);
-        pingMessage = (TextView) view.findViewById(R.id.pingMessage);
-        pingAddress = (TextView) view.findViewById(R.id.pingAddress);
-        pingImageWebView = (WebView) view.findViewById(R.id.pingImageWebView);
-        
+		View view = inflater.inflate(R.layout.fragment_ping, container, false);
+		FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
+		
+		pingTitle = (TextView) view.findViewById(R.id.pingTitle);
+		pingAuthor = (TextView) view.findViewById(R.id.pingAuthor);
+		pingMessage = (TextView) view.findViewById(R.id.pingMessage);
+		pingAddress = (TextView) view.findViewById(R.id.pingAddress);
+		pingImageWebView = (WebView) view.findViewById(R.id.pingImageWebView);
+		
 		Ping ping = bundle.getParcelable(PING_DATA);
 		
 		pingTitle.setText(ping.getTitle());
@@ -80,12 +80,12 @@ public class PingFragment extends Fragment
 				pingAuthor.setText(fname + " " + lname);
 			}
 		});
-
+		
 		if(ping.getImageUrlSmall() != null)
 			pingImageWebView.loadData(HtmlBuilder.buildImageHtml(ping.getImageUrlSmall()), "text/html; charset=UTF-8", null);
 		else
 			pingImageWebView.setVisibility(View.GONE);
 		
-        return view;
-    }
+		return view;
+	}
 }

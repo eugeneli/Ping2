@@ -24,15 +24,15 @@ public class MainFragment extends Fragment
 	}
 	
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
-        addPingButton = (ImageButton) view.findViewById(R.id.addButton);
-        settingsButton = (ImageButton) view.findViewById(R.id.settingsButton);
-        
-        setupListeners();
-        
-        return view;
+		View view = inflater.inflate(R.layout.fragment_main, container, false);
+		addPingButton = (ImageButton) view.findViewById(R.id.addButton);
+		settingsButton = (ImageButton) view.findViewById(R.id.settingsButton);
+		
+		setupListeners();
+		
+		return view;
     }
 	
 	private void setupListeners()
@@ -43,9 +43,9 @@ public class MainFragment extends Fragment
 			{
 				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
 				ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down,R.anim.slide_in_up, R.anim.slide_out_down);
-
+		
 				SettingsFragment settingsFrag = SettingsFragment.newInstance();
-
+		
 				ft.replace(R.id.fragmentContainer, settingsFrag, null);
 				ft.addToBackStack(NewPingFragment.TAG).commit();
 			}
@@ -57,12 +57,12 @@ public class MainFragment extends Fragment
 			{
 				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
 				ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down,R.anim.slide_in_up, R.anim.slide_out_down);
-
+				
 				NewPingFragment newPingFrag = NewPingFragment.newInstance();
 				Bundle bundle = new Bundle();
 				bundle.putBoolean(NewPingFragment.LATLNG_INCLUDED, false);
 				newPingFrag.setArguments(bundle);
-
+				
 				ft.replace(R.id.fragmentContainer, newPingFrag, null);
 				ft.addToBackStack(NewPingFragment.TAG).commit();
 			}

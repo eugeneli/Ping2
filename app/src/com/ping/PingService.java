@@ -33,26 +33,26 @@ public class PingService extends Service
 	private PingPrefs prefs;
 	
 	@Override
-    public void onCreate()
+	public void onCreate()
 	{
-        super.onCreate();
-        prefs = PingPrefs.getInstance(this);
-        pingApi = PingApi.getInstance(this, prefs.getAuthToken());
-    }
+		super.onCreate();
+		prefs = PingPrefs.getInstance(this);
+		pingApi = PingApi.getInstance(this, prefs.getAuthToken());
+	}
 	
 	private void handleIntent(Intent intent)
 	{
-        // Check the global background data setting
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-        if (!cm.getBackgroundDataSetting())
-        {
-        	Log.e(TAG, "No data connection. Stopping service.");
-            stopSelf();
-            return;
-        }
-        
-        Log.i(TAG, "Service started");
-        
+		// Check the global background data setting
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+		if (!cm.getBackgroundDataSetting())
+		{
+			Log.e(TAG, "No data connection. Stopping service.");
+			stopSelf();
+			return;
+		}
+		
+		Log.i(TAG, "Service started");
+		
 		LatLng loc = prefs.getLocation();
 		int radius = prefs.getZoom();
 		
@@ -69,44 +69,46 @@ public class PingService extends Service
 					JsonObject userJson = pingJson.get(User.USER).getAsJsonObject();
 					
 					Ping ping = new Ping();
-				    User user = new User();
-				    
-				    ping.fromJson(pingJson, false);
-				    user.fromJson(userJson);
-				    
-				    //Show notification with number of pings?
+					User user = new User();
+					
+					ping.fromJson(pingJson, false);
+					user.fromJson(userJson);
+					
+					//Show notification with number of pings?
 				}
 			}
 		});
 		
-	    stopSelf();
+		stopSelf();
 	}
 	
 	@Override
-    public void onStart(Intent intent, int startId) {
-        handleIntent(intent);
-    }
+	public void onStart(Intent intent, int startId)
+	{
+		handleIntent(intent);
+	}
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
 		handleIntent(intent);
-	    return Service.START_NOT_STICKY;
+		return Service.START_NOT_STICKY;
 	}
-
+	
 	@Override
-	public IBinder onBind(Intent arg0) {
+	public IBinder onBind(Intent arg0)
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	public static void scheduleService(Context context)
 	{
-	   Intent intent = new Intent(context, PingService.class);
-	   PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
-
-	   AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-	   alarm.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*60, pendingIntent);
-	   //Run every minute (1000*60) for testing purposes
+		Intent intent = new Intent(context, PingService.class);
+		PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+		
+		AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+		alarm.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis(), 1000*60, pendingIntent);
+		//Run every minute (1000*60) for testing purposes
 	}
 }

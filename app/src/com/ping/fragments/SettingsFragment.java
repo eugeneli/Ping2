@@ -31,29 +31,29 @@ public class SettingsFragment extends Fragment
 	
 	public static SettingsFragment newInstance() 
 	{
-	    return new SettingsFragment();
+		return new SettingsFragment();
 	}
 	
 	@Override
-    public void onCreate(Bundle savedInstanceState)
+	public void onCreate(Bundle savedInstanceState)
 	{
-        super.onCreate(savedInstanceState);
-        prefs = PingPrefs.getInstance(getActivity());
+		super.onCreate(savedInstanceState);
+		prefs = PingPrefs.getInstance(getActivity());
 		pingApi = PingApi.getInstance();
-    }
+	}
 	
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-        View view = inflater.inflate(R.layout.fragment_settings, container, false);
-        FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
-        
-        profile = (TextView) view.findViewById(R.id.profile);
-        logout = (TextView) view.findViewById(R.id.logout);
-        
-        setupListeners();
-        
-        return view;
+		View view = inflater.inflate(R.layout.fragment_settings, container, false);
+		FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
+		
+		profile = (TextView) view.findViewById(R.id.profile);
+		logout = (TextView) view.findViewById(R.id.logout);
+		
+		setupListeners();
+		
+		return view;
     }
 
 	private void setupListeners()
