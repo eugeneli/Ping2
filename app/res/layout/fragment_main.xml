@@ -1,6 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/SemiTransWhitePanel"
+    style="@style/SemiTransBluePanel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal" >
@@ -9,6 +9,7 @@
         android:id="@+id/settingsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        style="@style/BlueBackgroundImageButton"
         android:src="@drawable/menu" />
     
     <AutoCompleteTextView
@@ -24,6 +25,7 @@
 	    android:id="@+id/addButton"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
+	    style="@style/BlueBackgroundImageButton"
 	    android:src="@drawable/plus" />
 
 </LinearLayout>

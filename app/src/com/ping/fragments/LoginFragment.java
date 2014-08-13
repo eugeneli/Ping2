@@ -2,6 +2,7 @@ package com.ping.fragments;
 
 import com.ping.MainActivity;
 import com.ping.R;
+import com.ping.util.FontTools;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -34,16 +34,16 @@ public class LoginFragment extends Fragment
 	
 	public static LoginFragment newInstance() 
 	{
-	    LoginFragment myFragment = new LoginFragment();
-	    return myFragment;
+	    return new LoginFragment();
 	}
 	
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
-        
-        loginButton = (TextView) view.findViewById(R.id.login);
+		View view = inflater.inflate(R.layout.fragment_login, container, false);
+		FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
+		
+		loginButton = (TextView) view.findViewById(R.id.login);
 		registerButton = (TextView) view.findViewById(R.id.register);
 		username = (EditText) view.findViewById(R.id.username);
 		separator = view.findViewById(R.id.separator);
@@ -55,14 +55,8 @@ public class LoginFragment extends Fragment
 		submitRegisterButton = (Button) view.findViewById(R.id.submitRegister);
 		
 		setupListeners(getActivity());
-        
-        return view;
-    }
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
+		
+		return view;
 	}
 	
 	private void setupListeners(final Activity activity)
@@ -115,9 +109,4 @@ public class LoginFragment extends Fragment
 			}
 		});
 	}
-	
-	
-	
-	
-	
 }

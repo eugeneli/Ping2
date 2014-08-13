@@ -31,6 +31,10 @@
     <style name="MinimalEditText" parent="android:style/Widget.EditText">
     	<item name="android:background">@drawable/minimal_edittext</item>
 	</style>
+	
+    <style name="BlueBackgroundImageButton" parent="@android:style/Widget.ImageButton">
+        <item name="android:background">@drawable/blue_background_imagebutton</item>
+    </style>
     
     <style name="MinimalTextButton" parent="@android:style/Widget.TextView">
         <item name="android:textSize">20sp</item>

@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/SemiTransBluePanel"
+    style="@style/SemiTransWhitePanel"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -27,18 +27,9 @@
         android:layout_centerHorizontal="true"
         android:text="@string/submitPing" />
 
-    <EditText
-        android:id="@+id/title"
-        style="@style/MinimalEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:ems="10"
-        android:hint="@string/titleHint" />
 
     <EditText
-        android:id="@+id/duration"
+        android:id="@+id/address"
         style="@style/MinimalEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,47 +37,61 @@
         android:layout_below="@+id/title"
         android:ems="10"
         android:layout_marginTop="20dp"
-        android:hint="Duration" />
-
-    <EditText
-        android:id="@+id/address"
-        style="@style/MinimalEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/duration"
-        android:layout_below="@+id/duration"
-        android:ems="10"
-        android:layout_marginTop="20dp"
         android:hint="@string/addressHint" />
 
     <EditText
-        android:id="@+id/message"
+        android:id="@+id/title"
         style="@style/MinimalEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/address"
-        android:layout_below="@+id/address"
-        android:layout_marginTop="30dp"
+        android:layout_below="@+id/textView1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
         android:ems="10"
-        android:hint="@string/messageHint"
-        android:inputType="textMultiLine" />
+        android:hint="@string/titleHint" >
+
+        <requestFocus />
+    </EditText>
 
     <View
         android:id="@+id/view2"
         android:layout_width="220dp"
         android:layout_height="1dp"
         android:layout_below="@+id/title"
-        android:layout_alignRight="@+id/title"
-        android:layout_marginTop="10dp"
-        android:background="@android:color/darker_gray" />
-   
-    <View
-        android:id="@+id/view3"
-        android:layout_width="220dp"
-        android:layout_height="1dp"
-        android:layout_alignRight="@+id/duration"
-        android:layout_below="@+id/duration"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:background="@android:color/darker_gray" />
 
+    <ImageButton
+        android:id="@+id/addImageButton"
+        style="@style/BlueBackgroundImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/addedImage"
+        android:layout_below="@+id/addedImage"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/image" />
+
+    <ImageView
+        android:id="@+id/addedImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/view2"
+        android:layout_below="@+id/address"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_launcher"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/message"
+        style="@style/MinimalEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/addImageButton"
+        android:layout_below="@+id/addImageButton"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:hint="@string/messageHint"
+        android:inputType="textMultiLine" />
+   
 </RelativeLayout>
