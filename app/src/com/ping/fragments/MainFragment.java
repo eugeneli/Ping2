@@ -33,7 +33,7 @@ public class MainFragment extends Fragment
 		setupListeners();
 		
 		return view;
-    }
+	}
 	
 	private void setupListeners()
 	{

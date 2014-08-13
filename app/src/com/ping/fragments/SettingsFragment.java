@@ -54,7 +54,7 @@ public class SettingsFragment extends Fragment
 		setupListeners();
 		
 		return view;
-    }
+	}
 
 	private void setupListeners()
 	{
