@@ -1,7 +1,5 @@
 package com.ping;
 
-import java.util.Iterator;
-
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -121,10 +119,7 @@ public class MainActivity extends FragmentActivity implements PingInterface
 								FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 								ft.setCustomAnimations(R.anim.zoom_enter, R.anim.zoom_exit, R.anim.zoom_enter, R.anim.zoom_exit);
 
-								PingFragment pingFrag = PingFragment.newInstance();
-								Bundle bundle = new Bundle();
-								bundle.putParcelable(PingFragment.PING_DATA, selectedPing);
-								pingFrag.setArguments(bundle);
+								PingFragment pingFrag = PingFragment.newInstance(selectedPing);
 
 								ft.replace(R.id.fragmentContainer, pingFrag, "pingFragment");
 								ft.addToBackStack(PingFragment.TAG).commit();
@@ -174,28 +169,19 @@ public class MainActivity extends FragmentActivity implements PingInterface
 			try {
 				JsonArray pingsJson = response.getResult().getAsJsonArray(PingApi.RESPONSE);
 				Log.d(TAG, pingsJson.toString());
-				Iterator<JsonElement> iterator = pingsJson.iterator();
-
-				while(iterator.hasNext())
+				
+				for (JsonElement pingJsonData : pingsJson)
 				{
-				    JsonObject pingJson = (JsonObject) iterator.next();
-				    JsonObject userJson = pingJson.get(User.USER).getAsJsonObject();
-				    
-				    Ping ping = new Ping();
+					JsonObject pingJson  = pingJsonData.getAsJsonObject();
+					JsonObject userJson = pingJson.get(User.USER).getAsJsonObject();
+					
+					Ping ping = new Ping();
 				    User user = new User();
 				    
 				    ping.fromJson(pingJson, false);
 				    user.fromJson(userJson);
 				    
 				    map.addPingMarker(ping, user.getFullName());
-				    
-				    /*Gson gson = new Gson();
-				    Ping ping = gson.fromJson(pingJson, Ping.class);
-				    
-				    System.out.println("ASD: "+ ping.getId());
-				    System.out.println(ping.getCreatorId());
-
-				    map.addPingMarker(ping);*/
 				}
 			}
 			catch(NullPointerException npe)
@@ -203,12 +189,6 @@ public class MainActivity extends FragmentActivity implements PingInterface
 				Log.e(TAG, "Ping array response null");
 			}
 		}
-	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent)
-	{
-	    super.onActivityResult(requestCode, resultCode, intent);
 	}
 
 	@Override

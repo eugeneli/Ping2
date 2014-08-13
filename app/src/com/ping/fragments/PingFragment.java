@@ -11,14 +11,12 @@ import com.ping.util.HtmlBuilder;
 import com.ping.util.PingApi;
 
 import android.os.Bundle;
-import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PingFragment extends Fragment
@@ -26,6 +24,7 @@ public class PingFragment extends Fragment
 	public static final String TAG = NewPingFragment.class.getSimpleName();
 	
 	private PingApi pingApi;
+	private Bundle bundle;
 	
 	private TextView pingTitle;
 	private TextView pingAuthor;
@@ -35,15 +34,28 @@ public class PingFragment extends Fragment
 	
 	public static final String PING_DATA = "ping_data";
 	
-	public static PingFragment newInstance() 
+	public static PingFragment newInstance(Ping selectedPing) 
 	{
-		return new PingFragment();
+		PingFragment pf = new PingFragment();
+		Bundle b = new Bundle();
+	    b.putParcelable(PingFragment.PING_DATA, selectedPing);
+	    pf.setArguments(b);
+	    return pf;
 	}
+	
+	@Override
+    public void onCreate(Bundle savedInstanceState)
+	{
+        super.onCreate(savedInstanceState);
+		pingApi = PingApi.getInstance();
+		bundle = getArguments();
+    }
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
         View view = inflater.inflate(R.layout.fragment_ping, container, false);
+        FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
         
         pingTitle = (TextView) view.findViewById(R.id.pingTitle);
         pingAuthor = (TextView) view.findViewById(R.id.pingAuthor);
@@ -51,18 +63,6 @@ public class PingFragment extends Fragment
         pingAddress = (TextView) view.findViewById(R.id.pingAddress);
         pingImageWebView = (WebView) view.findViewById(R.id.pingImageWebView);
         
-        return view;
-    }
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
-		FontTools.applyFont(getActivity(), getActivity().findViewById(R.id.root));
-		
-		pingApi = PingApi.getInstance(getActivity(), null);
-		
-		Bundle bundle = getArguments();
 		Ping ping = bundle.getParcelable(PING_DATA);
 		
 		pingTitle.setText(ping.getTitle());
@@ -86,5 +86,6 @@ public class PingFragment extends Fragment
 		else
 			pingImageWebView.setVisibility(View.GONE);
 		
-	}
+        return view;
+    }
 }

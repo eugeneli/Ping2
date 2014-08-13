@@ -41,6 +41,7 @@ public class LoginFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
         View view = inflater.inflate(R.layout.fragment_login, container, false);
+        FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
         
         loginButton = (TextView) view.findViewById(R.id.login);
 		registerButton = (TextView) view.findViewById(R.id.register);
@@ -57,13 +58,6 @@ public class LoginFragment extends Fragment
         
         return view;
     }
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
-		FontTools.applyFont(getActivity(), getActivity().findViewById(R.id.root));
-	}
 	
 	private void setupListeners(final Activity activity)
 	{

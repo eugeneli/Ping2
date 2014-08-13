@@ -35,26 +35,27 @@ public class SettingsFragment extends Fragment
 	}
 	
 	@Override
+    public void onCreate(Bundle savedInstanceState)
+	{
+        super.onCreate(savedInstanceState);
+        prefs = PingPrefs.getInstance(getActivity());
+		pingApi = PingApi.getInstance();
+    }
+	
+	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
+        FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
         
         profile = (TextView) view.findViewById(R.id.profile);
         logout = (TextView) view.findViewById(R.id.logout);
         
+        setupListeners();
+        
         return view;
     }
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
-		FontTools.applyFont(getActivity(), getActivity().findViewById(R.id.root));
-		pingApi = PingApi.getInstance(getActivity(), null);
-		prefs = PingPrefs.getInstance(getActivity());
-		setupListeners();
-	}
-	
+
 	private void setupListeners()
 	{
 		profile.setOnClickListener(new OnClickListener() {

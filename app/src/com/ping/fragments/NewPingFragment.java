@@ -14,6 +14,7 @@ import com.ping.R;
 import com.ping.interfaces.PingInterface;
 import com.ping.models.EncodedBitmap;
 import com.ping.models.Ping;
+import com.ping.models.User;
 import com.ping.util.FontTools;
 import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
@@ -25,6 +26,7 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -48,6 +50,7 @@ public class NewPingFragment extends Fragment
 	private PingInterface dataPasser;
 	private PingApi pingApi;
 	private PingPrefs prefs;
+	private Bundle bundle;
 	
 	private EditText title;
 	private EditText duration;
@@ -70,9 +73,19 @@ public class NewPingFragment extends Fragment
 	}
 	
 	@Override
+    public void onCreate(Bundle savedInstanceState)
+	{
+        super.onCreate(savedInstanceState);
+        prefs = PingPrefs.getInstance(getActivity());
+		pingApi = PingApi.getInstance();
+		bundle = getArguments();
+    }
+	
+	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View view = inflater.inflate(R.layout.fragment_newping, container, false);
+		FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
 		
 		title = (EditText) view.findViewById(R.id.title);
 		//duration = (EditText) view.findViewById(R.id.duration);
@@ -82,18 +95,6 @@ public class NewPingFragment extends Fragment
 		addedImage = (ImageView) view.findViewById(R.id.addedImage);
 		addImageButton = (ImageButton) view.findViewById(R.id.addImageButton);
 		
-		return view;
-	}
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
-		FontTools.applyFont(getActivity(), getActivity().findViewById(R.id.root));
-		prefs = PingPrefs.getInstance(getActivity());
-		pingApi = PingApi.getInstance();
-		
-		final Bundle bundle = getArguments();
 		final boolean includedLatLng = bundle.getBoolean(LATLNG_INCLUDED);
 		
 		addImageButton.setOnClickListener(new OnClickListener() {
@@ -110,11 +111,12 @@ public class NewPingFragment extends Fragment
 			@Override
 			public void onClick(View v)
 			{
+				User user = prefs.getCurrentUser();
 				ping.setTitle(title.getText().toString());
 				ping.setMessage(message.getText().toString());
 				ping.setAddress(address.getText().toString());
-				ping.setCreatorId(prefs.getCurrentUser().getId());
-				//ping.setAuthorName("TODO. GET USER'S NAME FROM BACKEND. GET USER MODEL WHEN FIRST SIGNING IN!");
+				ping.setCreatorId(user.getId());
+				//ping.setAuthorName(user.getFullName());
 				
 				if(!includedLatLng)
 				{
@@ -140,6 +142,8 @@ public class NewPingFragment extends Fragment
 				}
 			}
 		});
+		
+		return view;
 	}
 	
 	private void postNewPing(final Ping ping)
@@ -192,20 +196,37 @@ public class NewPingFragment extends Fragment
 	{
 		if (resultCode == Activity.RESULT_OK && requestCode == CAMERA_PHOTO)
 		{
-			File tempFile = getTempFile();
-			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inSampleSize = 4;
-			Bitmap bmp = BitmapFactory.decodeFile(tempFile.getPath(), options);
-			if (bmp != null)
-			{
-				Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.pictureAdded), Toast.LENGTH_SHORT).show();
-				ping.setImage(new EncodedBitmap(bmp));
-				addedImage.setImageBitmap(bmp);
-				addedImage.setVisibility(View.VISIBLE);
-			}
-			else
-				Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.pictureNotAdded), Toast.LENGTH_SHORT).show();
-			tempFile.delete();			
+			AsyncTask<Void, Void, Bitmap> loadBitmapTask = new AsyncTask<Void, Void, Bitmap>() {
+				private Bitmap bmp;
+				
+			    @Override
+			    protected Bitmap doInBackground(Void... params)
+			    {
+			    	File tempFile = getTempFile();
+					BitmapFactory.Options options = new BitmapFactory.Options();
+					options.inSampleSize = 4;
+					bmp = BitmapFactory.decodeFile(tempFile.getPath(), options);
+					tempFile.delete();
+					
+					return bmp;
+			    }
+
+			    @Override
+			    protected void onPostExecute(Bitmap bitmap)
+			    {
+			    	if (bmp != null)
+					{
+						Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.pictureAdded), Toast.LENGTH_SHORT).show();
+						ping.setImage(new EncodedBitmap(bmp));
+						addedImage.setImageBitmap(bmp);
+						addedImage.setVisibility(View.VISIBLE);
+					}
+					else
+						Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.pictureNotAdded), Toast.LENGTH_SHORT).show();
+			    }
+			};
+			loadBitmapTask.execute();
+			
 		}
 	}
 }

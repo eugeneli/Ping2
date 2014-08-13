@@ -2,7 +2,6 @@ package com.ping.fragments;
 
 import com.ping.R;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -31,16 +30,10 @@ public class MainFragment extends Fragment
         addPingButton = (ImageButton) view.findViewById(R.id.addButton);
         settingsButton = (ImageButton) view.findViewById(R.id.settingsButton);
         
+        setupListeners();
+        
         return view;
     }
-	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
-	{
-		super.onActivityCreated(savedInstanceState);
-		
-		setupListeners();
-	}
 	
 	private void setupListeners()
 	{
@@ -75,11 +68,4 @@ public class MainFragment extends Fragment
 			}
 		});
 	}
-	
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent)
-	{
-	    super.onActivityResult(requestCode, resultCode, intent);
-	}
-
 }

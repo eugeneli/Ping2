@@ -1,16 +1,15 @@
 package com.ping;
 
 import java.util.Calendar;
-import java.util.Iterator;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 import com.ping.models.Ping;
+import com.ping.models.User;
 import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
 
@@ -62,13 +61,18 @@ public class PingService extends Service
 			public void onCompleted(Exception e, Response<JsonObject> response)
 			{
 				JsonArray pingsJson = response.getResult().getAsJsonArray(PingApi.RESPONSE);
-				Iterator<JsonElement> iterator = pingsJson.iterator();
-				 
-				while(iterator.hasNext())
+				Log.d(TAG, pingsJson.toString());
+				
+				for (JsonElement pingJsonData : pingsJson)
 				{
-				    JsonElement pingJson = (JsonElement) iterator.next();
-				    Gson gson = new Gson();
-				    Ping ping = gson.fromJson(pingJson, Ping.class);
+					JsonObject pingJson  = pingJsonData.getAsJsonObject();
+					JsonObject userJson = pingJson.get(User.USER).getAsJsonObject();
+					
+					Ping ping = new Ping();
+				    User user = new User();
+				    
+				    ping.fromJson(pingJson, false);
+				    user.fromJson(userJson);
 				    
 				    //Show notification with number of pings?
 				}
