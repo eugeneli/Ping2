@@ -57,5 +57,10 @@
 	    <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
 	    <item name="android:windowExitAnimation">@anim/slide_out_down</item>
 	</style>
+	
+	<style name="DialogZoomAnimation">
+	    <item name="android:windowEnterAnimation">@anim/zoom_enter</item>
+	    <item name="android:windowExitAnimation">@anim/zoom_exit</item>
+	</style>
 
 </resources>

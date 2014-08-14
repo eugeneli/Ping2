@@ -10,18 +10,20 @@ import com.ping.util.FontTools;
 import com.ping.util.HtmlBuilder;
 import com.ping.util.PingApi;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.webkit.WebView;
 import android.widget.TextView;
 
-public class PingFragment extends Fragment
-{	
+public class PingFragment extends DialogFragment
+{
 	public static final String TAG = NewPingFragment.class.getSimpleName();
 	
 	private PingApi pingApi;
@@ -43,6 +45,15 @@ public class PingFragment extends Fragment
 		b.putParcelable(PingFragment.PING_DATA, selectedPing);
 		pf.setArguments(b);
 		return pf;
+	}
+	
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState) 
+	{
+		final Dialog dialog = super.onCreateDialog(savedInstanceState);
+		dialog.getWindow().getAttributes().windowAnimations = R.style.DialogZoomAnimation;
+		dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		return dialog;
 	}
 	
 	@Override

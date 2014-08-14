@@ -18,6 +18,7 @@ public class StartActivity extends Activity
 	public static final String TAG = StartActivity.class.getSimpleName();
 	private PingApi pingApi;
 	private PingPrefs prefs;
+	private Context context;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -25,7 +26,7 @@ public class StartActivity extends Activity
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
-		final Context context = this;
+		context = this;
 		
 		pingApi = PingApi.getInstance(getApplicationContext(), null);
 		prefs = PingPrefs.getInstance(this);
@@ -53,6 +54,7 @@ public class StartActivity extends Activity
 					}
 				}
 			});
+			
 		}
 	}
 }

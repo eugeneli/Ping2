@@ -160,7 +160,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 					}
 				}
 			});
-		} 
+		}
 		else if(oAuthProvider.equals(FACEBOOK))
 		{
 			Log.d(TAG, oAuthProvider + " - " + oAuthAccessToken);

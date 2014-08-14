@@ -32,7 +32,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,7 +49,6 @@ public class NewPingFragment extends DialogFragment
 {	
 	public static final String TAG = NewPingFragment.class.getSimpleName();
 	
-	private final NewPingFragment fragment = this;
 	private PingInterface dataPasser;
 	private PingApi pingApi;
 	private PingPrefs prefs;
@@ -64,6 +62,8 @@ public class NewPingFragment extends DialogFragment
 	private ImageButton addImageButton;
 	private ImageView addedImage;
 	private Button submitButton;
+	
+	private boolean includedLatLng;
 	
 	private static final int CAMERA_PHOTO = 0;
 	
@@ -92,10 +92,10 @@ public class NewPingFragment extends DialogFragment
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) 
 	{
-	    final Dialog dialog = super.onCreateDialog(savedInstanceState);
-	    dialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
-	    dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-	    return dialog;
+		final Dialog dialog = super.onCreateDialog(savedInstanceState);
+		dialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+		dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		return dialog;
 	}
 	
 	@Override
@@ -122,7 +122,7 @@ public class NewPingFragment extends DialogFragment
 		addedImage = (ImageView) view.findViewById(R.id.addedImage);
 		addImageButton = (ImageButton) view.findViewById(R.id.addImageButton);
 		
-		final boolean includedLatLng = bundle.getBoolean(LATLNG_INCLUDED);
+		includedLatLng = bundle.getBoolean(LATLNG_INCLUDED);
 		
 		addImageButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -183,6 +183,7 @@ public class NewPingFragment extends DialogFragment
 				{
 					JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
 					ping.setId(jsonResponse.get(Ping.ID).getAsInt());
+					Log.d(TAG, jsonResponse.toString());
 					
 					JsonArray imageArray = jsonResponse.get(Ping.IMAGES).getAsJsonArray();
 					if(imageArray.size() > 0)

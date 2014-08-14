@@ -107,24 +107,21 @@ public class MainActivity extends FragmentActivity implements PingInterface
 							@Override
 							public void onCompleted(Exception e, Response<JsonObject> response)
 							{
-								JsonObject pingJson = response.getResult().getAsJsonObject(PingApi.RESPONSE);
-								JsonArray images = pingJson.get(Ping.IMAGES).getAsJsonArray();
-								if(images.size() > 0)
+								if(PingApi.validResponse(response, context, resources))
 								{
-									JsonObject image = images.get(0).getAsJsonObject();
+									JsonObject pingJson = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+									JsonArray images = pingJson.get(Ping.IMAGES).getAsJsonArray();
+									if(images.size() > 0)
+									{
+										JsonObject image = images.get(0).getAsJsonObject();
+										
+										selectedPing.setImageUrlThumb(image.get(Ping.IMAGE_URL_THUMB).getAsString());
+										selectedPing.setImageUrlSmall(image.get(Ping.IMAGE_URL_SMALL).getAsString());
+										selectedPing.setImageUrlLarge(image.get(Ping.IMAGE_URL_LARGE).getAsString());
+									}
 									
-									selectedPing.setImageUrlThumb(image.get(Ping.IMAGE_URL_THUMB).getAsString());
-									selectedPing.setImageUrlSmall(image.get(Ping.IMAGE_URL_SMALL).getAsString());
-									selectedPing.setImageUrlLarge(image.get(Ping.IMAGE_URL_LARGE).getAsString());
+									PingFragment.newInstance(selectedPing).show(getSupportFragmentManager(), TAG);
 								}
-								
-								FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-								ft.setCustomAnimations(R.anim.zoom_enter, R.anim.zoom_exit, R.anim.zoom_enter, R.anim.zoom_exit);
-
-								PingFragment pingFrag = PingFragment.newInstance(selectedPing);
-
-								ft.replace(R.id.fragmentContainer, pingFrag, "pingFragment");
-								ft.addToBackStack(PingFragment.TAG).commit();
 							}
 							
 						});
@@ -137,17 +134,6 @@ public class MainActivity extends FragmentActivity implements PingInterface
 				public void onMapLongClick(LatLng point)
 				{
 					NewPingFragment.newInstance(true, point).show(getSupportFragmentManager(), TAG);
-					/*FragmentTransaction ft = parentActivity.getSupportFragmentManager().beginTransaction();
-					ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down,R.anim.slide_in_up, R.anim.slide_out_down);
-
-					NewPingFragment newPingFrag = NewPingFragment.newInstance();
-					Bundle bundle = new Bundle();
-					bundle.putBoolean(NewPingFragment.LATLNG_INCLUDED, true);
-					bundle.putParcelable(NewPingFragment.BUNDLE_LATLNG, point);
-					newPingFrag.setArguments(bundle);
-
-					ft.replace(R.id.fragmentContainer, newPingFrag, null);
-					ft.addToBackStack(PingFragment.TAG).commit();*/
 				}
 			});
 			

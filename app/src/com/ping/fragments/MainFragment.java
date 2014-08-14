@@ -5,6 +5,7 @@ import com.ping.R;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,13 +42,7 @@ public class MainFragment extends Fragment
 			@Override
 			public void onClick(View v)
 			{
-				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-				ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down,R.anim.slide_in_up, R.anim.slide_out_down);
-		
-				SettingsFragment settingsFrag = SettingsFragment.newInstance();
-		
-				ft.replace(R.id.fragmentContainer, settingsFrag, null);
-				ft.addToBackStack(NewPingFragment.TAG).commit();
+				SettingsFragment.newInstance().show(getActivity().getSupportFragmentManager(), TAG);
 			}
 		});
 		
@@ -55,16 +50,7 @@ public class MainFragment extends Fragment
 			@Override
 			public void onClick(View v)
 			{
-				NewPingFragment.newInstance(false, null).show(getChildFragmentManager(), TAG);
-
-//				FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-//				ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down,R.anim.slide_in_up, R.anim.slide_out_down);
-//				
-//				NewPingFragment newPingFrag = NewPingFragment.newInstance();
-//				
-//				
-//				ft.replace(R.id.fragmentContainer, newPingFrag, null);
-//				ft.addToBackStack(NewPingFragment.TAG).commit();
+				NewPingFragment.newInstance(false, null).show(getActivity().getSupportFragmentManager(), TAG);
 			}
 		});
 	}

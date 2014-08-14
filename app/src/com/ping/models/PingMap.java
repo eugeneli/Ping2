@@ -3,9 +3,7 @@ package com.ping.models;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -18,8 +16,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ping.R;
-import com.ping.fragments.NewPingFragment;
-import com.ping.fragments.PingFragment;
 import com.ping.util.PingPrefs;
 
 public class PingMap

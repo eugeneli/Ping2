@@ -4,99 +4,87 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
-
-    <TextView
-        android:id="@+id/textView1"
+    
+    <LinearLayout 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
         android:layout_centerHorizontal="true"
-        android:text="@string/newPingTitle"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/submitPingButton"
-        style="@style/FlatBlueButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="@string/submitPing" />
+	    <TextView
+	        android:id="@+id/textView1"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/newPingTitle"
+	        android:layout_gravity="center"
+	        android:textAppearance="?android:attr/textAppearanceSmall" />
 
+	    <EditText
+	        android:id="@+id/title"
+	        style="@style/MinimalEditText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="16dp"
+	        android:ems="10"
+	        android:hint="@string/titleHint" />
 
-    <EditText
-        android:id="@+id/address"
-        style="@style/MinimalEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/title"
-        android:layout_below="@+id/title"
-        android:layout_centerHorizontal="true"
-        android:ems="10"
-        android:layout_marginTop="20dp"
-        android:hint="@string/addressHint" />
+	    <View
+	        android:id="@+id/view2"
+	        android:layout_width="220dp"
+	        android:layout_height="1dp"
+	        android:layout_marginTop="10dp"
+	        android:layout_gravity="center"
+	        android:background="@android:color/darker_gray" />
 
-    <EditText
-        android:id="@+id/title"
-        style="@style/MinimalEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:ems="10"
-        android:hint="@string/titleHint" >
+	    <EditText
+	        android:id="@+id/address"
+	        style="@style/MinimalEditText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="15dp"
+	        android:ems="10"
+	        android:hint="@string/addressHint" >
+	    </EditText>
 
-        <requestFocus />
-    </EditText>
+	    <ImageView
+	        android:id="@+id/addedImage"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="19dp"
+	        android:src="@drawable/ic_launcher"
+	        android:visibility="gone" />
 
-    <View
-        android:id="@+id/view2"
-        android:layout_width="220dp"
-        android:layout_height="1dp"
-        android:layout_below="@+id/title"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:background="@android:color/darker_gray" />
+	    <ImageButton
+	        android:id="@+id/addImageButton"
+	        style="@style/BlueBackgroundImageButton"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="18dp"
+	        android:src="@drawable/image" />
 
-    <ImageView
-        android:id="@+id/addedImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/view2"
-        android:layout_below="@+id/address"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_launcher"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone" />
-
-    <EditText
-        android:id="@+id/message"
-        style="@style/MinimalEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/addImageButton"
-        android:layout_below="@+id/addImageButton"
-        android:layout_marginTop="20dp"
-        android:ems="10"
-        android:hint="@string/messageHint"
-        android:layout_centerHorizontal="true"
-        android:inputType="textMultiLine" />
-
-    <ImageButton
-        android:id="@+id/addImageButton"
-        style="@style/BlueBackgroundImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/address"
-        android:layout_below="@+id/address"
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/image" />
+	    <EditText
+	        android:id="@+id/message"
+	        style="@style/MinimalEditText"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="23dp"
+	        android:ems="10"
+	        android:hint="@string/messageHint"
+	        android:inputType="textMultiLine" />
+   </LinearLayout>
    
+    <Button
+		android:id="@+id/submitPingButton"
+		style="@style/FlatBlueButton"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_centerHorizontal="true"
+		android:text="@string/submitPing" />
+    
 </RelativeLayout>
