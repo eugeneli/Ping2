@@ -105,11 +105,18 @@ public class NewPingFragment extends DialogFragment implements Interactable
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		context = getActivity();
 		resources = getResources();
-		prefs = PingPrefs.getInstance(context);
+		prefs = PingPrefs.getInstance();
 		pingApi = PingApi.getInstance();
 		bundle = getArguments();
+	}
+	
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+		dataPasser = (OnFragmentResultListener) activity;
+		context = (FragmentActivity) activity;
 	}
 	
 	@Override
@@ -223,13 +230,6 @@ public class NewPingFragment extends DialogFragment implements Interactable
 	public void passData(Bundle data)
 	{
 		dataPasser.onFragmentResult(data);
-	}
-	
-	@Override
-	public void onAttach(Activity a)
-	{
-		super.onAttach(a);
-		dataPasser = (OnFragmentResultListener) a;
 	}
 	
 	@Override

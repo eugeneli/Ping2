@@ -5,6 +5,7 @@ import com.ping.R;
 import com.ping.interfaces.Interactable;
 import com.ping.util.FontTools;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -41,10 +42,10 @@ public class LoginFragment extends Fragment implements Interactable
 	}
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState)
+	public void onAttach(Activity activity)
 	{
-		super.onCreate(savedInstanceState);
-		context = getActivity();
+		super.onAttach(activity);
+		context  = activity;
 	}
 	
 	@Override

@@ -28,6 +28,11 @@ public class PingPrefs
 		return instance;
 	}
 	
+	public static PingPrefs getInstance()
+	{
+		return instance;
+	}
+	
 	private PingPrefs(Context context)
 	{
 		prefs = context.getApplicationContext().getSharedPreferences(APP_NAME, Context.MODE_PRIVATE);

@@ -3,9 +3,11 @@ package com.ping.fragments;
 import com.ping.R;
 import com.ping.interfaces.Interactable;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +19,7 @@ public class MainFragment extends Fragment implements Interactable
 {	
 	public static final String TAG = MainFragment.class.getSimpleName();
 	
-	private Context context;
+	private FragmentActivity context;
 	
 	private ImageButton addPingButton;
 	private ImageButton settingsButton;
@@ -28,10 +30,10 @@ public class MainFragment extends Fragment implements Interactable
 	}
 	
 	@Override
-	public void onCreate(Bundle savedInstanceState)
+	public void onAttach(Activity activity)
 	{
-		super.onCreate(savedInstanceState);
-		context = getActivity();
+		super.onAttach(activity);
+		context = (FragmentActivity) activity;
 	}
 	
 	@Override
@@ -53,7 +55,7 @@ public class MainFragment extends Fragment implements Interactable
 			@Override
 			public void onClick(View v)
 			{
-				SettingsFragment.newInstance().show(getActivity().getSupportFragmentManager(), TAG);
+				SettingsFragment.newInstance().show(context.getSupportFragmentManager(), TAG);
 			}
 		});
 		
@@ -61,7 +63,7 @@ public class MainFragment extends Fragment implements Interactable
 			@Override
 			public void onClick(View v)
 			{
-				NewPingFragment.newInstance(false, null).show(getActivity().getSupportFragmentManager(), TAG);
+				NewPingFragment.newInstance(false, null).show(context.getSupportFragmentManager(), TAG);
 			}
 		});
 	}

@@ -28,7 +28,7 @@ public class StartActivity extends Activity
 		context = this;
 		
 		pingApi = PingApi.getInstance(getApplicationContext(), null);
-		prefs = PingPrefs.getInstance(this);
+		prefs = PingPrefs.getInstance(getApplicationContext());
 		if(prefs.getAuthToken() == null)
 		{
 			Intent intent = new Intent(this, LoginActivity.class);

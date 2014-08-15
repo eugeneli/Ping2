@@ -5,6 +5,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 import com.ping.R;
 import com.ping.interfaces.Interactable;
+import com.ping.interfaces.OnFragmentResultListener;
 import com.ping.interfaces.Renderable;
 import com.ping.models.Ping;
 import com.ping.models.User;
@@ -12,6 +13,7 @@ import com.ping.util.FontTools;
 import com.ping.util.HtmlBuilder;
 import com.ping.util.PingApi;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -67,12 +69,18 @@ public class PingFragment extends DialogFragment implements Renderable, Interact
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		context = getActivity();
 		pingApi = PingApi.getInstance();
 		bundle = getArguments();
 		pingCreator = new User();
 		
 		ping = bundle.getParcelable(PING_DATA);
+	}
+	
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+		context = (FragmentActivity) activity;
 	}
 	
 	@Override

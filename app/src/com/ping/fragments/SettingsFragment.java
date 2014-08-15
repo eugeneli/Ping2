@@ -10,6 +10,7 @@ import com.ping.util.FontTools;
 import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -44,8 +45,7 @@ public class SettingsFragment extends DialogFragment implements Interactable
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		context = getActivity();
-		prefs = PingPrefs.getInstance(context);
+		prefs = PingPrefs.getInstance();
 		pingApi = PingApi.getInstance();
 	}
 	
@@ -56,6 +56,13 @@ public class SettingsFragment extends DialogFragment implements Interactable
 		dialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
 		dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 		return dialog;
+	}
+	
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+		context = (FragmentActivity) activity;
 	}
 	
 	@Override

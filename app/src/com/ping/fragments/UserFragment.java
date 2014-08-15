@@ -9,10 +9,12 @@ import com.ping.models.User;
 import com.ping.util.FontTools;
 import com.ping.util.PingApi;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,10 +58,16 @@ public class UserFragment extends DialogFragment implements Renderable
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		context = getActivity();
 		pingApi = PingApi.getInstance();
 		bundle = getArguments();
 		user = new User();
+	}
+	
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+		context = (FragmentActivity) activity;
 	}
 	
 	@Override
