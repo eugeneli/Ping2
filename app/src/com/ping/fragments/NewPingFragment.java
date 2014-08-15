@@ -11,7 +11,8 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 import com.ping.MainActivity;
 import com.ping.R;
-import com.ping.interfaces.PingInterface;
+import com.ping.interfaces.Interactable;
+import com.ping.interfaces.OnFragmentResultListener;
 import com.ping.models.EncodedBitmap;
 import com.ping.models.Ping;
 import com.ping.models.User;
@@ -20,7 +21,9 @@ import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -30,26 +33,29 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class NewPingFragment extends Fragment
+public class NewPingFragment extends DialogFragment implements Interactable
 {	
 	public static final String TAG = NewPingFragment.class.getSimpleName();
 	
-	private final NewPingFragment fragment = this;
-	private PingInterface dataPasser;
+	private OnFragmentResultListener dataPasser;
 	private PingApi pingApi;
 	private PingPrefs prefs;
+	private FragmentActivity context;
+	private Resources resources;
 	private Bundle bundle;
 	
 	private EditText title;
@@ -60,6 +66,8 @@ public class NewPingFragment extends Fragment
 	private ImageView addedImage;
 	private Button submitButton;
 	
+	private boolean includedLatLng;
+	
 	private static final int CAMERA_PHOTO = 0;
 	
 	public static final String LATLNG_INCLUDED = "latlng_included";
@@ -67,25 +75,55 @@ public class NewPingFragment extends Fragment
 	
 	private Ping ping = new Ping();
 	
-	public static NewPingFragment newInstance()
+	public static NewPingFragment newInstance(boolean locIncluded, LatLng loc)
 	{
-		return new NewPingFragment();
+		NewPingFragment npf = new NewPingFragment();
+		Bundle bundle = new Bundle();
+		
+		if(locIncluded)
+		{
+			bundle.putBoolean(NewPingFragment.LATLNG_INCLUDED, true);
+			bundle.putParcelable(NewPingFragment.BUNDLE_LATLNG, loc);
+		}
+		else
+			bundle.putBoolean(NewPingFragment.LATLNG_INCLUDED, false);
+		
+		npf.setArguments(bundle);
+		return npf;
+	}
+	
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState) 
+	{
+		final Dialog dialog = super.onCreateDialog(savedInstanceState);
+		dialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+		dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+		return dialog;
 	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		prefs = PingPrefs.getInstance(getActivity());
+		resources = getResources();
+		prefs = PingPrefs.getInstance();
 		pingApi = PingApi.getInstance();
 		bundle = getArguments();
+	}
+	
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+		dataPasser = (OnFragmentResultListener) activity;
+		context = (FragmentActivity) activity;
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View view = inflater.inflate(R.layout.fragment_newping, container, false);
-		FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
+		FontTools.applyFont(context, view.findViewById(R.id.root));
 		
 		title = (EditText) view.findViewById(R.id.title);
 		//duration = (EditText) view.findViewById(R.id.duration);
@@ -95,8 +133,16 @@ public class NewPingFragment extends Fragment
 		addedImage = (ImageView) view.findViewById(R.id.addedImage);
 		addImageButton = (ImageButton) view.findViewById(R.id.addImageButton);
 		
-		final boolean includedLatLng = bundle.getBoolean(LATLNG_INCLUDED);
+		includedLatLng = bundle.getBoolean(LATLNG_INCLUDED);
 		
+		attachListeners();
+		
+		return view;
+	}
+	
+	@Override
+	public void attachListeners()
+	{
 		addImageButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v)
@@ -120,7 +166,7 @@ public class NewPingFragment extends Fragment
 				
 				if(!includedLatLng)
 				{
-					Geocoder gc = new Geocoder(fragment.getActivity().getBaseContext());
+					Geocoder gc = new Geocoder(context);
 					try {
 						List<Address> list = gc.getFromLocationName(address.getText().toString(), 1);
 						LatLng loc = new LatLng(list.get(0).getLatitude(), list.get(0).getLongitude());
@@ -142,8 +188,6 @@ public class NewPingFragment extends Fragment
 				}
 			}
 		});
-		
-		return view;
 	}
 	
 	private void postNewPing(final Ping ping)
@@ -152,24 +196,28 @@ public class NewPingFragment extends Fragment
 			@Override
 			public void onCompleted(Exception e, Response<JsonObject> response)
 			{
-				JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
-				ping.setId(jsonResponse.get(Ping.ID).getAsInt());
-				
-				JsonArray imageArray = jsonResponse.get(Ping.IMAGES).getAsJsonArray();
-				if(imageArray.size() > 0)
+				if(PingApi.validResponse(response, context, resources))
 				{
-					JsonObject imageData = imageArray.get(0).getAsJsonObject();
+					JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+					ping.setId(jsonResponse.get(Ping.ID).getAsInt());
+					Log.d(TAG, jsonResponse.toString());
 					
-					ping.setImageUrlThumb(imageData.get(Ping.IMAGE_URL_THUMB).getAsString());
-					ping.setImageUrlSmall(imageData.get(Ping.IMAGE_URL_SMALL).getAsString());
-					ping.setImageUrlLarge(imageData.get(Ping.IMAGE_URL_LARGE).getAsString());
+					JsonArray imageArray = jsonResponse.get(Ping.IMAGES).getAsJsonArray();
+					if(imageArray.size() > 0)
+					{
+						JsonObject imageData = imageArray.get(0).getAsJsonObject();
+						
+						ping.setImageUrlThumb(imageData.get(Ping.IMAGE_URL_THUMB).getAsString());
+						ping.setImageUrlSmall(imageData.get(Ping.IMAGE_URL_SMALL).getAsString());
+						ping.setImageUrlLarge(imageData.get(Ping.IMAGE_URL_LARGE).getAsString());
+					}
+					
+					Bundle b = new Bundle();
+					b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
+					b.putParcelable(MainActivity.BUNDLE_DATA, ping);
+					passData(b);
+					dismiss();
 				}
-				
-				Bundle b = new Bundle();
-				b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
-				b.putParcelable(MainActivity.BUNDLE_DATA, ping);
-				passData(b);
-				getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
 			}
 		});
 	}
@@ -182,13 +230,6 @@ public class NewPingFragment extends Fragment
 	public void passData(Bundle data)
 	{
 		dataPasser.onFragmentResult(data);
-	}
-	
-	@Override
-	public void onAttach(Activity a)
-	{
-		super.onAttach(a);
-		dataPasser = (PingInterface) a;
 	}
 	
 	@Override
@@ -216,17 +257,16 @@ public class NewPingFragment extends Fragment
 				{
 					if (bmp != null)
 					{
-						Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.pictureAdded), Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, resources.getString(R.string.pictureAdded), Toast.LENGTH_SHORT).show();
 						ping.setImage(new EncodedBitmap(bmp));
 						addedImage.setImageBitmap(bmp);
 						addedImage.setVisibility(View.VISIBLE);
 					}
 					else
-						Toast.makeText(getActivity(), getActivity().getResources().getString(R.string.pictureNotAdded), Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, resources.getString(R.string.pictureNotAdded), Toast.LENGTH_SHORT).show();
 			    }
 			};
 			loadBitmapTask.execute();
-			
 		}
 	}
 }

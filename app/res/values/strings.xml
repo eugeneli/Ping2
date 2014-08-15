@@ -20,13 +20,19 @@
     <string name="logout">Logout</string>
     
     <string name="connectionFailed">Couldn\'t connect to Ping</string>
+    <string name="authenticationFailed">Log in failed</string>
+    <string name="badRequest">Bad Request</string>
+    <string name="notFound">Resource not found</string>
+    <string name="forbidden">Not allowed to access this resource</string>
+    <string name="unprocessable">Request failed</string>
+    
     <string name="pictureAdded">Picture added!</string>
     <string name="pictureNotAdded">Couldn\'t add photo</string>
     <string name="loggedOut">You have been logged out</string>
 
     <string name="gplusLoadingMessage">Signing you in via Google+</string>
     <string name="fbLoadingMessage">Signing you in via Facebook</string>
-    <string name="serverClientId">795269385456–7kjnqtdmovr7tsd9udnsfgmnclps4cur.apps.googleusercontent.com</string>
+    <string name="serverClientId">795269385456-7kjnqtdmovr7tsd9udnsfgmnclps4cur.apps.googleusercontent.com</string>
 
     <string name="app_id">1513182342246142</string>
 </resources>

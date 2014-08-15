@@ -2,6 +2,7 @@ package com.ping;
 
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -10,8 +11,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
+import com.ping.fragments.NewPingFragment;
 import com.ping.fragments.PingFragment;
-import com.ping.interfaces.PingInterface;
+import com.ping.interfaces.OnFragmentResultListener;
 import com.ping.models.Ping;
 import com.ping.models.PingMap;
 import com.ping.models.User;
@@ -24,13 +26,12 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity implements PingInterface
+public class MainActivity extends FragmentActivity implements OnFragmentResultListener
 {	
 	public static final String TAG = MainActivity.class.getSimpleName();
 	
@@ -105,28 +106,33 @@ public class MainActivity extends FragmentActivity implements PingInterface
 							@Override
 							public void onCompleted(Exception e, Response<JsonObject> response)
 							{
-								JsonObject pingJson = response.getResult().getAsJsonObject(PingApi.RESPONSE);
-								JsonArray images = pingJson.get(Ping.IMAGES).getAsJsonArray();
-								if(images.size() > 0)
+								if(PingApi.validResponse(response, context, resources))
 								{
-									JsonObject image = images.get(0).getAsJsonObject();
+									JsonObject pingJson = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+									JsonArray images = pingJson.get(Ping.IMAGES).getAsJsonArray();
+									if(images.size() > 0)
+									{
+										JsonObject image = images.get(0).getAsJsonObject();
+										
+										selectedPing.setImageUrlThumb(image.get(Ping.IMAGE_URL_THUMB).getAsString());
+										selectedPing.setImageUrlSmall(image.get(Ping.IMAGE_URL_SMALL).getAsString());
+										selectedPing.setImageUrlLarge(image.get(Ping.IMAGE_URL_LARGE).getAsString());
+									}
 									
-									selectedPing.setImageUrlThumb(image.get(Ping.IMAGE_URL_THUMB).getAsString());
-									selectedPing.setImageUrlSmall(image.get(Ping.IMAGE_URL_SMALL).getAsString());
-									selectedPing.setImageUrlLarge(image.get(Ping.IMAGE_URL_LARGE).getAsString());
+									PingFragment.newInstance(selectedPing).show(getSupportFragmentManager(), TAG);
 								}
-								
-								FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-								ft.setCustomAnimations(R.anim.zoom_enter, R.anim.zoom_exit, R.anim.zoom_enter, R.anim.zoom_exit);
-
-								PingFragment pingFrag = PingFragment.newInstance(selectedPing);
-
-								ft.replace(R.id.fragmentContainer, pingFrag, "pingFragment");
-								ft.addToBackStack(PingFragment.TAG).commit();
 							}
 							
 						});
 					}
+				}
+			});
+			
+			map.setOnMapLongClickListener(new OnMapLongClickListener() {
+				@Override
+				public void onMapLongClick(LatLng point)
+				{
+					NewPingFragment.newInstance(true, point).show(getSupportFragmentManager(), TAG);
 				}
 			});
 			
@@ -164,7 +170,7 @@ public class MainActivity extends FragmentActivity implements PingInterface
 	
 	private void addPingsToMap(Response<JsonObject> response)
 	{
-		if(response != null)
+		if(PingApi.validResponse(response, context, getResources()))
 		{
 			try {
 				JsonArray pingsJson = response.getResult().getAsJsonArray(PingApi.RESPONSE);

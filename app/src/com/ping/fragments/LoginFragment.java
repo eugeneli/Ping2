@@ -2,9 +2,11 @@ package com.ping.fragments;
 
 import com.ping.MainActivity;
 import com.ping.R;
+import com.ping.interfaces.Interactable;
 import com.ping.util.FontTools;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -18,9 +20,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class LoginFragment extends Fragment
+public class LoginFragment extends Fragment implements Interactable
 {
 	public static final String TAG = MainActivity.class.getSimpleName();
+	
+	private Context context;
 	
 	private TextView loginButton;
 	private TextView registerButton;
@@ -32,16 +36,23 @@ public class LoginFragment extends Fragment
 	private EditText newEmail;
 	private Button submitRegisterButton;
 	
-	public static LoginFragment newInstance() 
+	public static LoginFragment newInstance()
 	{
 	    return new LoginFragment();
+	}
+	
+	@Override
+	public void onAttach(Activity activity)
+	{
+		super.onAttach(activity);
+		context  = activity;
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		View view = inflater.inflate(R.layout.fragment_login, container, false);
-		FontTools.applyFont(getActivity(), view.findViewById(R.id.root));
+		FontTools.applyFont(context, view.findViewById(R.id.root));
 		
 		loginButton = (TextView) view.findViewById(R.id.login);
 		registerButton = (TextView) view.findViewById(R.id.register);
@@ -54,12 +65,13 @@ public class LoginFragment extends Fragment
 		newEmail = (EditText) view.findViewById(R.id.newEmail);
 		submitRegisterButton = (Button) view.findViewById(R.id.submitRegister);
 		
-		setupListeners(getActivity());
+		attachListeners();
 		
 		return view;
 	}
 	
-	private void setupListeners(final Activity activity)
+	@Override
+	public void attachListeners()
 	{
 		loginButton.setOnClickListener(new OnClickListener() {
 			@Override
@@ -92,7 +104,7 @@ public class LoginFragment extends Fragment
 			{
 				if(actionId == EditorInfo.IME_ACTION_DONE || event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
 				{
-					Intent intent = new Intent(activity, MainActivity.class);
+					Intent intent = new Intent(context, MainActivity.class);
 					startActivity(intent);
 					return true;
 				}
@@ -104,7 +116,7 @@ public class LoginFragment extends Fragment
 			@Override
 			public void onClick(View v)
 			{
-				Intent intent = new Intent(activity, MainActivity.class);
+				Intent intent = new Intent(context, MainActivity.class);
 				startActivity(intent);
 			}
 		});

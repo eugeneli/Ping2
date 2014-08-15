@@ -18,4 +18,5 @@
 	<color name="black">#000000</color>
 	
 	<color name="darkBabyBlue">#69BED8</color>
+	<color name="semiTransWhite">#DDFFFFFF</color>
 </resources>

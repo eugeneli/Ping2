@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.facebook.Session;
 import com.facebook.SessionState;
@@ -50,6 +49,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 	private Resources resources;
 	private ProgressDialog progress;
 	private LinearLayout oAuthContainer;
+	private Context context;
 
 	public static final String GOOGLE_PLUS = "google";
 	public static final String FACEBOOK = "facebook";
@@ -75,6 +75,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 		FontTools.applyFont(this, findViewById(R.id.root));
 
 		oAuthContainer = (LinearLayout) findViewById(R.id.oauthContainer);
+		context = this;
 
 		pingApi = PingApi.getInstance();
 		prefs = PingPrefs.getInstance(this);
@@ -130,8 +131,12 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 
 	public void loginWithOAuth(String oAuthProvider, final String oAuthAccessToken)
 	{
-		final Context context = this;
-		oAuthContainer.setVisibility(View.GONE);
+		runOnUiThread (new Thread(new Runnable() {
+			public void run()
+			{
+				oAuthContainer.setVisibility(View.GONE);
+			}
+		}));
 		if(oAuthProvider.equals(GOOGLE_PLUS))
 		{
 			Log.d(TAG, oAuthProvider + " - " + oAuthAccessToken);
@@ -139,7 +144,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 				@Override
 				public void onCompleted(Exception e, Response<JsonObject> response)
 				{
-					if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
+					if(PingApi.validResponse(response, context, getResources()))
 					{
 						JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
 						String authToken = jsonResponse.get(PingApi.JSON_AUTHTOKEN).getAsString();
@@ -150,12 +155,12 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 			
 						Intent intent = new Intent(context,MainActivity.class);
 						startActivity(intent);
-			
+
 						finish();
 					}
 				}
 			});
-		} 
+		}
 		else if(oAuthProvider.equals(FACEBOOK))
 		{
 			Log.d(TAG, oAuthProvider + " - " + oAuthAccessToken);
@@ -163,22 +168,18 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 				@Override
 				public void onCompleted(Exception e,Response<JsonObject> response)
 				{
-					try {
-						if(response.getHeaders().getResponseCode() == PingApi.HTTP_SUCCESS)
-						{
-							JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
-							String authToken = jsonResponse.get(PingApi.JSON_AUTHTOKEN).getAsString();
-							prefs.setAuthToken(authToken);
-							pingApi.setAuthToken(authToken);
-			
-							Log.d(TAG, authToken);
-							Intent intent = new Intent(context, MainActivity.class);
-							startActivity(intent);
-			
-							finish();
-						}
-					} catch (Exception ex) {
-						Toast.makeText(getBaseContext(),resources.getString(R.string.connectionFailed),Toast.LENGTH_SHORT).show();
+					if(PingApi.validResponse(response, context, getResources()))
+					{
+						JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
+						String authToken = jsonResponse.get(PingApi.JSON_AUTHTOKEN).getAsString();
+						prefs.setAuthToken(authToken);
+						pingApi.setAuthToken(authToken);
+		
+						Log.d(TAG, authToken);
+						Intent intent = new Intent(context, MainActivity.class);
+						startActivity(intent);
+		
+						finish();
 					}
 				}
 			});
@@ -259,8 +260,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 		{
 			try {
 				intentInProgress = true;
-				googleConnectionResult.startResolutionForResult(this,
-						GPLUS_REQUEST_CODE_SIGNIN);
+				googleConnectionResult.startResolutionForResult(this,GPLUS_REQUEST_CODE_SIGNIN);
 			} catch (SendIntentException e) {
 				// The intent was canceled before it was sent. Return to the default
 				// state and attempt to connect to get an updated ConnectionResult.
@@ -295,11 +295,10 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 			@Override
 			protected Object doInBackground(Object... params)
 			{
-				String serverClientId = resources.getString(R.string.serverClientId);
-				String scope = "audience:server:client_id:" + serverClientId;// +":api_scope:" + Scopes.PLUS_LOGIN + " https://www.googleapis.com/auth/plus.profile.emails.read";
-
+				String scope = "oauth2:profile email";
 				try {
 					String token = GoogleAuthUtil.getToken(context, Plus.AccountApi.getAccountName(googleApi), scope);
+					Log.d(TAG, token);
 					loginWithOAuth(GOOGLE_PLUS, token);
 				} catch (UserRecoverableAuthException e) {
 					startActivityForResult(e.getIntent(), 0);

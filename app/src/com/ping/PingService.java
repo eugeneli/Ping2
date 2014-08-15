@@ -60,21 +60,30 @@ public class PingService extends Service
 			@Override
 			public void onCompleted(Exception e, Response<JsonObject> response)
 			{
-				JsonArray pingsJson = response.getResult().getAsJsonArray(PingApi.RESPONSE);
-				Log.d(TAG, pingsJson.toString());
-				
-				for (JsonElement pingJsonData : pingsJson)
+				if(PingApi.validResponse(response, getBaseContext(), getResources()))
 				{
-					JsonObject pingJson  = pingJsonData.getAsJsonObject();
-					JsonObject userJson = pingJson.get(User.USER).getAsJsonObject();
-					
-					Ping ping = new Ping();
-					User user = new User();
-					
-					ping.fromJson(pingJson, false);
-					user.fromJson(userJson);
-					
-					//Show notification with number of pings?
+					try {
+						JsonArray pingsJson = response.getResult().getAsJsonArray(PingApi.RESPONSE);
+						Log.d(TAG, pingsJson.toString());
+						
+						for (JsonElement pingJsonData : pingsJson)
+						{
+							JsonObject pingJson  = pingJsonData.getAsJsonObject();
+							JsonObject userJson = pingJson.get(User.USER).getAsJsonObject();
+							
+							Ping ping = new Ping();
+							User user = new User();
+							
+							ping.fromJson(pingJson, false);
+							user.fromJson(userJson);
+							
+							//Show notification with number of pings?
+						}
+					}
+					catch(NullPointerException npe)
+					{
+						Log.e(TAG, "Ping array response null");
+					}
 				}
 			}
 		});

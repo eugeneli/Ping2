@@ -3,9 +3,7 @@ package com.ping.models;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
@@ -18,8 +16,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ping.R;
-import com.ping.fragments.NewPingFragment;
-import com.ping.fragments.PingFragment;
 import com.ping.util.PingPrefs;
 
 public class PingMap
@@ -41,29 +37,16 @@ public class PingMap
 		map.setMyLocationEnabled(true);
 		
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(prefs.getLocation(), prefs.getZoom()));
-		
-		map.setOnMapLongClickListener(new OnMapLongClickListener() {
-			@Override
-			public void onMapLongClick(LatLng point)
-			{
-				FragmentTransaction ft = parentActivity.getSupportFragmentManager().beginTransaction();
-				ft.setCustomAnimations(R.anim.slide_in_up, R.anim.slide_out_down,R.anim.slide_in_up, R.anim.slide_out_down);
-
-				NewPingFragment newPingFrag = NewPingFragment.newInstance();
-				Bundle bundle = new Bundle();
-				bundle.putBoolean(NewPingFragment.LATLNG_INCLUDED, true);
-				bundle.putParcelable(NewPingFragment.BUNDLE_LATLNG, point);
-				newPingFrag.setArguments(bundle);
-
-				ft.replace(R.id.fragmentContainer, newPingFrag, null);
-				ft.addToBackStack(PingFragment.TAG).commit();
-			}
-		});
 	}
 	
 	public void setOnInfoWindowClickedListener(OnInfoWindowClickListener ocl)
 	{
 		map.setOnInfoWindowClickListener(ocl);
+	}
+	
+	public void setOnMapLongClickListener(OnMapLongClickListener omlc)
+	{
+		map.setOnMapLongClickListener(omlc);
 	}
 	
 	public void setOnCameraChangeListener(OnCameraChangeListener ocl)
