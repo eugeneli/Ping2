@@ -30,6 +30,7 @@ public class PingApi
 	public final static String JSON_AUTHTOKEN = "auth_token";
 	
 	public final static int HTTP_SUCCESS = 200;
+	public final static int HTTP_NOT_MODIFIED = 304;
 	public final static int HTTP_BAD_REQUEST = 400;
 	public final static int HTTP_AUTH_FAIL = 401;
 	public final static int HTTP_FORBIDDEN = 403;
@@ -232,6 +233,8 @@ public class PingApi
 		switch(response.getHeaders().getResponseCode())
 		{
 			case HTTP_SUCCESS:
+				return true;
+			case HTTP_NOT_MODIFIED:
 				return true;
 			case HTTP_AUTH_FAIL:
 				Toast.makeText(context, resources.getString(R.string.authenticationFailed), Toast.LENGTH_SHORT).show();

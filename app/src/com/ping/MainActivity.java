@@ -13,7 +13,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 import com.ping.fragments.NewPingFragment;
 import com.ping.fragments.PingFragment;
-import com.ping.interfaces.PingInterface;
+import com.ping.interfaces.OnFragmentResultListener;
 import com.ping.models.Ping;
 import com.ping.models.PingMap;
 import com.ping.models.User;
@@ -26,13 +26,12 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity implements PingInterface
+public class MainActivity extends FragmentActivity implements OnFragmentResultListener
 {	
 	public static final String TAG = MainActivity.class.getSimpleName();
 	

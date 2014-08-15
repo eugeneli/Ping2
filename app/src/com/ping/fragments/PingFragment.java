@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 import com.ping.R;
+import com.ping.interfaces.Interactable;
+import com.ping.interfaces.Renderable;
 import com.ping.models.Ping;
 import com.ping.models.User;
 import com.ping.util.FontTools;
@@ -14,21 +16,26 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.webkit.WebView;
 import android.widget.TextView;
 
-public class PingFragment extends DialogFragment
+public class PingFragment extends DialogFragment implements Renderable, Interactable
 {
 	public static final String TAG = NewPingFragment.class.getSimpleName();
 	
 	private PingApi pingApi;
 	private Bundle bundle;
 	private Context context;
+	
+	private Ping ping;
+	private User pingCreator;
 	
 	private TextView pingTitle;
 	private TextView pingAuthor;
@@ -63,6 +70,9 @@ public class PingFragment extends DialogFragment
 		context = getActivity();
 		pingApi = PingApi.getInstance();
 		bundle = getArguments();
+		pingCreator = new User();
+		
+		ping = bundle.getParcelable(PING_DATA);
 	}
 	
 	@Override
@@ -77,12 +87,6 @@ public class PingFragment extends DialogFragment
 		pingAddress = (TextView) view.findViewById(R.id.pingAddress);
 		pingImageWebView = (WebView) view.findViewById(R.id.pingImageWebView);
 		
-		Ping ping = bundle.getParcelable(PING_DATA);
-		
-		pingTitle.setText(ping.getTitle());
-		pingMessage.setText(ping.getMessage());
-		//pingAddress.setText("near " + ping.getAddress());
-		
 		pingApi.getUserById(ping.getCreatorId(), new FutureCallback<Response<JsonObject>>() {
 			@Override
 			public void onCompleted(Exception e, Response<JsonObject> response)
@@ -90,19 +94,42 @@ public class PingFragment extends DialogFragment
 				if(PingApi.validResponse(response, context, getResources()))
 				{
 					JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
-					String fname = jsonResponse.get(User.FIRST_NAME).getAsString();
-					String lname = jsonResponse.get(User.LAST_NAME).getAsString();
 					
-					pingAuthor.setText(fname + " " + lname);
+					pingCreator.fromJson(jsonResponse);
+					pingAuthor.setText(pingCreator.getFullName());
 				}
 			}
 		});
+		
+		renderView();
+		attachListeners();
+		
+		return view;
+	}
+	
+	@Override
+	public void attachListeners()
+	{
+		pingAuthor.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v)
+			{
+				dismiss();
+				UserFragment.newInstance(pingCreator.getId()).show(((FragmentActivity)context).getSupportFragmentManager(), TAG);
+			}
+		});
+	}
+	
+	@Override
+	public void renderView()
+	{
+		pingTitle.setText(ping.getTitle());
+		pingMessage.setText(ping.getMessage());
+		//pingAddress.setText("near " + ping.getAddress());
 		
 		if(ping.getImageUrlSmall() != null)
 			pingImageWebView.loadData(HtmlBuilder.buildImageHtml(ping.getImageUrlSmall()), "text/html; charset=UTF-8", null);
 		else
 			pingImageWebView.setVisibility(View.GONE);
-		
-		return view;
 	}
 }

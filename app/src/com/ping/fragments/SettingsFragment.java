@@ -5,6 +5,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 import com.ping.LoginActivity;
 import com.ping.R;
+import com.ping.interfaces.Interactable;
 import com.ping.util.FontTools;
 import com.ping.util.PingApi;
 import com.ping.util.PingPrefs;
@@ -14,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -22,7 +24,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SettingsFragment extends DialogFragment
+public class SettingsFragment extends DialogFragment implements Interactable
 {	
 	public static final String TAG = NewPingFragment.class.getSimpleName();
 	
@@ -65,18 +67,19 @@ public class SettingsFragment extends DialogFragment
 		profile = (TextView) view.findViewById(R.id.profile);
 		logout = (TextView) view.findViewById(R.id.logout);
 		
-		setupListeners();
+		attachListeners();
 		
 		return view;
 	}
 
-	private void setupListeners()
+	public void attachListeners()
 	{
 		profile.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v)
 			{
-				
+				dismiss();
+				UserFragment.newInstance(prefs.getCurrentUser().getId()).show(((FragmentActivity)context).getSupportFragmentManager(), TAG);
 			}
 		});
 		

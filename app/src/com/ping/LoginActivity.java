@@ -295,9 +295,7 @@ public class LoginActivity extends FragmentActivity implements ConnectionCallbac
 			@Override
 			protected Object doInBackground(Object... params)
 			{
-				//String serverClientId = "795269385456-7kjnqtdmovr7tsd9udnsfgmnclps4cur.apps.googleusercontent.com";//resources.getString(R.string.serverClientId);
-				String scope = "oauth2:profile email";//server:client_id:"+ serverClientId +":api_scope:" + Scopes.PLUS_LOGIN + " https://www.googleapis.com/auth/plus.profile.emails.read"; //"audience:server:client_id:" + serverClientId;// +":api_scope:" + Scopes.PLUS_LOGIN + " https://www.googleapis.com/auth/plus.profile.emails.read";
-
+				String scope = "oauth2:profile email";
 				try {
 					String token = GoogleAuthUtil.getToken(context, Plus.AccountApi.getAccountName(googleApi), scope);
 					Log.d(TAG, token);

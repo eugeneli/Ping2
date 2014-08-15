@@ -11,7 +11,8 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Response;
 import com.ping.MainActivity;
 import com.ping.R;
-import com.ping.interfaces.PingInterface;
+import com.ping.interfaces.Interactable;
+import com.ping.interfaces.OnFragmentResultListener;
 import com.ping.models.EncodedBitmap;
 import com.ping.models.Ping;
 import com.ping.models.User;
@@ -22,6 +23,7 @@ import com.ping.util.PingPrefs;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -45,14 +47,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class NewPingFragment extends DialogFragment
+public class NewPingFragment extends DialogFragment implements Interactable
 {	
 	public static final String TAG = NewPingFragment.class.getSimpleName();
 	
-	private PingInterface dataPasser;
+	private OnFragmentResultListener dataPasser;
 	private PingApi pingApi;
 	private PingPrefs prefs;
 	private FragmentActivity context;
+	private Resources resources;
 	private Bundle bundle;
 	
 	private EditText title;
@@ -103,6 +106,7 @@ public class NewPingFragment extends DialogFragment
 	{
 		super.onCreate(savedInstanceState);
 		context = getActivity();
+		resources = getResources();
 		prefs = PingPrefs.getInstance(context);
 		pingApi = PingApi.getInstance();
 		bundle = getArguments();
@@ -124,6 +128,14 @@ public class NewPingFragment extends DialogFragment
 		
 		includedLatLng = bundle.getBoolean(LATLNG_INCLUDED);
 		
+		attachListeners();
+		
+		return view;
+	}
+	
+	@Override
+	public void attachListeners()
+	{
 		addImageButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v)
@@ -169,8 +181,6 @@ public class NewPingFragment extends DialogFragment
 				}
 			}
 		});
-		
-		return view;
 	}
 	
 	private void postNewPing(final Ping ping)
@@ -179,7 +189,7 @@ public class NewPingFragment extends DialogFragment
 			@Override
 			public void onCompleted(Exception e, Response<JsonObject> response)
 			{
-				if(PingApi.validResponse(response, context, getResources()))
+				if(PingApi.validResponse(response, context, resources))
 				{
 					JsonObject jsonResponse = response.getResult().getAsJsonObject(PingApi.RESPONSE);
 					ping.setId(jsonResponse.get(Ping.ID).getAsInt());
@@ -199,9 +209,7 @@ public class NewPingFragment extends DialogFragment
 					b.putInt(MainActivity.BUNDLE_ACTION, MainActivity.Actions.NEW_PING);
 					b.putParcelable(MainActivity.BUNDLE_DATA, ping);
 					passData(b);
-					NewPingFragment.this.dismiss();
-					
-					//context.getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+					dismiss();
 				}
 			}
 		});
@@ -221,7 +229,7 @@ public class NewPingFragment extends DialogFragment
 	public void onAttach(Activity a)
 	{
 		super.onAttach(a);
-		dataPasser = (PingInterface) a;
+		dataPasser = (OnFragmentResultListener) a;
 	}
 	
 	@Override
@@ -249,13 +257,13 @@ public class NewPingFragment extends DialogFragment
 				{
 					if (bmp != null)
 					{
-						Toast.makeText(context, context.getResources().getString(R.string.pictureAdded), Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, resources.getString(R.string.pictureAdded), Toast.LENGTH_SHORT).show();
 						ping.setImage(new EncodedBitmap(bmp));
 						addedImage.setImageBitmap(bmp);
 						addedImage.setVisibility(View.VISIBLE);
 					}
 					else
-						Toast.makeText(context, context.getResources().getString(R.string.pictureNotAdded), Toast.LENGTH_SHORT).show();
+						Toast.makeText(context, resources.getString(R.string.pictureNotAdded), Toast.LENGTH_SHORT).show();
 			    }
 			};
 			loadBitmapTask.execute();
